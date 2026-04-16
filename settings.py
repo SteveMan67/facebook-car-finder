@@ -6,8 +6,10 @@ ALLOWED_MODELS = ['accord', 'civic', 'tl', 'tsx']
 
 # listings with any of these terms in their title will be ignored.
 # You can also use this to filter out makes or models you don't want.
-
 EXCLUDED_TERMS = ['2D']
+
+# only show listings with one or more of these words
+INCLUDED_TERMS = []
 
 MAX_PRICE = 13500
 MIN_PRICE = 0

@@ -24,15 +24,19 @@ rows = cursor.fetchall()
 
 car_count = 0
 
-print(ALLOWED_MAKES)
-
 for row in rows:
     filtered_make = False
+
+    if ALLOWED_MAKES == []:
+        filtered_make = True
     
     for make in ALLOWED_MAKES:
         filtered_make = True if make.lower() in row[0].lower() or filtered_make else False
 
     filtered_model = False
+
+    if ALLOWED_MODELS == []:
+        filtered_model = True
 
     for model in ALLOWED_MODELS:
         filtered_model = True if model.lower() in row[0].lower() or filtered_model else False
@@ -42,7 +46,16 @@ for row in rows:
     for term in EXCLUDED_TERMS:
         has_excluded_term = True if term.lower() in row[0].lower() or has_excluded_term else False
 
-    if filtered_make and filtered_model and not has_excluded_term:
+    has_included_terms = False
+
+    if INCLUDED_TERMS == []:
+        has_included_terms = True
+    else:
+        for term in INCLUDED_TERMS:
+            has_included_terms = True if term.lower() in row[0].lower() or has_included_terms else False
+
+
+    if filtered_make and filtered_model and not has_excluded_term and has_included_terms:
         car_count += 1
         print("--------------------------------------")
         print(row[0])
