@@ -14,6 +14,19 @@ rows = cursor.fetchall()
 
 print(f"db contains {len(rows)} rows")
 
+
+cursor.execute('''
+                CREATE TABLE IF NOT EXISTS viewed (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT NOT NULL,
+                    price INTEGER,
+                    url TEXT UNIQUE,
+                    mileage INTEGER,
+                    year INTEGER,
+                    location TEXT
+                )
+               ''')
+
 cursor.execute('''SELECT title, price, mileage, url, year, location
                FROM cars 
                WHERE price <= ? AND price >= ? AND mileage <= ? AND mileage >= ? AND year <= ? AND year >= ?''', 
@@ -23,6 +36,8 @@ conn.commit()
 rows = cursor.fetchall()
 
 car_count = 0
+
+matching_cars = []
 
 for row in rows:
     filtered_make = False
@@ -56,8 +71,19 @@ for row in rows:
 
 
     if filtered_make and filtered_model and not has_excluded_term and has_included_terms:
-        car_count += 1
         print("--------------------------------------")
+        try:
+            cursor.execute('''
+                        INSERT INTO viewed (url, title, price, mileage, year, location)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                           ''', (row[3], row[0], row[1], row[2], row[4], row[5]))
+
+            conn.commit()
+            print("!!! NEW !!!")
+            # TODO send email or notification for a new car
+        except Exception as e:
+            pass
+        car_count += 1
         print(row[0])
         print(f'${row[1]}')
         print(f'Mileage: {row[2]}')
