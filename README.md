@@ -93,4 +93,16 @@ The minimum and maximum year to filter by.
 
 ---
 
+### **Setting Up Email Notifications**
+
+The default configuration is for gmail, but you can use a different smtp server if you wish. To set up gmail, you need to get your app password. You can find this in your google account settings. It should be a 16 character string. Put this in `secrets.py`. You can use the `example-secrets.py`, and just rename it.
+
+You also need to set SENDER_ADDRESS to the email associated with the google account you created the app password for.
+
+`RECIEVER_ADDRESSES` is a list of email addresses to send the email to.
+
+On windows, I used task scheduler to run a .bat file every day that points to the python files, in order. I also set `Run task as soon as possible if scheduled start is missed`. This is super useful for searching marketplace.
+
+---
+
 Have fun, don't do anything I wouldn't do!

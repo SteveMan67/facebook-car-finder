@@ -18,6 +18,7 @@ MIN_MILEAGE = 50000
 MIN_YEAR = 2010
 MAX_YEAR = 2022
 
+
 # -- SCRAPER SETUP --
 
 # Purge the database when the scraper runs (not reccomended)
@@ -43,3 +44,14 @@ CHROME_PATH = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 SCROLLS = 20
 
 RUN_HEADLESS = True
+
+# -- NOTIFICATION SETUP
+#
+# You need to create a python file called secrets.py in order to get email notifications.
+# You will also need to install smtplib.
+#
+SEND_NOTIFICATIONS = True
+
+# Don't change this unless you want to use a different email address
+SMTP_SERVER = "smtp.gmail.com"
+PORT_NUMBER = 587

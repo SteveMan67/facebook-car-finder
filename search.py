@@ -1,5 +1,8 @@
 import sqlite3
 from settings import *
+from secrets import *
+import smtplib
+from email.message import EmailMessage
 
 db_path = r"C:\Users\Timothy\facebook-car-finder\cars.db"
 
@@ -13,7 +16,6 @@ conn.commit()
 rows = cursor.fetchall()
 
 print(f"db contains {len(rows)} rows")
-
 
 cursor.execute('''
                 CREATE TABLE IF NOT EXISTS viewed (
@@ -37,7 +39,35 @@ rows = cursor.fetchall()
 
 car_count = 0
 
-matching_cars = []
+new_cars = []
+
+def send_notification(subject, new_items):
+    sender = SENDER_ADDRESS
+    pwd = APP_PASSWORD
+
+    msg = EmailMessage()
+    msg['Subject'] = subject
+    msg['From'] = sender
+    msg['To'] = ", ".join(RECIEVER_ADDRESSES)
+
+    body = "New cars found:\n\n"
+    for item in new_items:
+        print(item)
+        body += "---------------------------------\r"
+        body += f"{item[0]}\n" # Title
+        body += f"${item[1]}\n" # Price
+        body += f"{item[2]}mi\n" # Mileage
+        body += f"{item[5]}\n" # Location
+        body += f"{item[3]}\n" # url
+
+    body += "---------------------------------\r"
+
+    msg.set_content(body) 
+
+    with smtplib.SMTP(SMTP_SERVER, PORT_NUMBER) as server:
+        server.starttls()
+        server.login(sender, pwd)
+        server.send_message(msg)
 
 for row in rows:
     filtered_make = False
@@ -79,6 +109,7 @@ for row in rows:
                            ''', (row[3], row[0], row[1], row[2], row[4], row[5]))
 
             conn.commit()
+            new_cars.append(row)
             print("!!! NEW !!!")
             # TODO send email or notification for a new car
         except Exception as e:
@@ -90,6 +121,12 @@ for row in rows:
         print(f'Location: {row[5]}')
         print(f'url: {row[3]}')
 
+if len(new_cars) > 0 and SEND_NOTIFICATIONS:
+    send_notification("New Car Listings", new_cars)
+
 print("")
-print(f"found {car_count} cars matching search parameters")
+print(f"found {car_count} total, {len(new_cars)} new cars matching search parameters")
+
+# send_notification("New Car Listings", [["1902 Rick Astley", 100, -2000, "platformed.jmeow.net", 1902, "Old England"]])
+
 

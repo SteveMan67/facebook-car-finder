@@ -1,4 +1,5 @@
 cars.db
 .env
 __pycache__
-
+secrets.py
+run_cars.bat
