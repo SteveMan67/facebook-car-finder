@@ -48,6 +48,8 @@ How many times it should scroll the page down, by 1200-3000 pixels each time. Th
 
 Once you have all the settings right, you should be able to just run the python script either through the terminal (you probably use Linux if you choose this option) or by double clicking it.
 
+It might take a few tries to get an instance of chrome running. Idk why, I was having trouble with it. If it doesn't work just try it Files\Google\Chrome\Application\chrome
+
 It might take a minute or two to scrape. Once it's done it saves all the cars it found in the database.
 
 ---
