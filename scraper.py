@@ -37,7 +37,7 @@ def add_car(title, price, url, mileage, location, year=None):
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cursor.execute('''
             INSERT INTO cars (title, price, url, year, mileage, location, scraped_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
                        ''', (title, price, url, year, mileage, location, now))
         conn.commit()
     except sqlite3.IntegrityError:
@@ -87,7 +87,7 @@ def parse_data(listings):
 
             print(f"Saved: {title} | ${price} | {mileage}mi | {clean_url} | {year}")
 
-            add_car(title, price, clean_url, mileage, location, True, year)
+            add_car(title, price, clean_url, mileage, location, year)
 
         except Exception as e:
             print(f"Parse error: {raw_text} -> {e}")
@@ -107,9 +107,9 @@ def run_scraper():
         else:
             browser_context = p.chromium.launch_persistent_context(
                 executable_path=CHROME_PATH,
-                user_data_dir=USER_PATH,
+                channel="chrome",
                 headless=False,
-                args=['--start-maximixed']
+                user_data_dir=USER_PATH,
                 )
 
         print("context launched!")

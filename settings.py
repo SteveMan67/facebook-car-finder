@@ -43,4 +43,3 @@ CHROME_PATH = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 SCROLLS = 20
 
 RUN_HEADLESS = True
-
