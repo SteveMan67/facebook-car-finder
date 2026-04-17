@@ -1,5 +1,7 @@
 # -- SEARCH SETUP --
 
+PURGE_VIEWED_DB = False
+
 # case insensitive
 ALLOWED_MAKES = ['honda', 'acura']
 ALLOWED_MODELS = ['accord', 'civic', 'tl', 'tsx']
@@ -50,7 +52,7 @@ RUN_HEADLESS = True
 # You need to create a python file called secrets.py in order to get email notifications.
 # You will also need to install smtplib.
 #
-SEND_NOTIFICATIONS = True
+SEND_NOTIFICATIONS = False
 
 # Don't change this unless you want to use a different email address
 SMTP_SERVER = "smtp.gmail.com"

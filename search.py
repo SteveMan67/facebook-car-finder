@@ -4,18 +4,22 @@ from secrets import *
 import smtplib
 from email.message import EmailMessage
 
-db_path = r"C:\Users\Timothy\facebook-car-finder\cars.db"
 
-conn = sqlite3.connect(db_path)
+conn = sqlite3.connect("cars.db")
 cursor = conn.cursor()
 
 cursor.execute('''SELECT title from cars where 1 = 1''')
 
-conn.commit() 
+conn.commit()
 
 rows = cursor.fetchall()
 
 print(f"db contains {len(rows)} rows")
+
+if PURGE_DB:
+    cursor.execute('''
+                DROP TABLE IF EXISTS viewed
+                   ''')
 
 cursor.execute('''
                 CREATE TABLE IF NOT EXISTS viewed (

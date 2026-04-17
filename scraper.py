@@ -5,7 +5,7 @@ from datetime import datetime
 import random
 from settings import *
 
-conn = sqlite3.connect(DB_PATH)
+conn = sqlite3.connect(cars.db)
 cursor = conn.cursor()
 
 def init_db(): 

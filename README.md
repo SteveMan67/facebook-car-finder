@@ -10,6 +10,7 @@ This is a marketplace scraper built for searching for cars. I made it because th
 
 - Chrome
 - Playwright - `pip install playwright`
+- smtplib - if you want email notifications
 - Python obviously
 
 ## **Setting up `settings.py`**
@@ -19,10 +20,6 @@ Note that file paths should start with r, like `r"C:\..."`. This is python's fau
 **`CHROME_PATH`**
 
 First, find the path to chrome. On windows, this is typically `C:\Program Files\Google\Chrome\Application\chrome.exe`. If you use Linux you probably know how to find it.
-
-**`DB_PATH`**
-
-This is the path to the database file to store the cars in. It must point to an actual database file, even if it doesn't exist. If it doesn't exist, it will automatically create it.
 
 `USER_PATH`
 
@@ -106,3 +103,7 @@ On windows, I used task scheduler to run a .bat file every day that points to th
 ---
 
 Have fun, don't do anything I wouldn't do!
+
+## Testing for flavortown
+
+There are a lot of settings and a lot to set up. If you don't want to set all this up, I've included my database of cars. After that you can just run `search.py` and it should search the database. Do note that I searched for stickshift cars, so all the results will be stickshift. After that if you want to try to set up the scraper, go ahead. I've tried to make it as easy as possible.
