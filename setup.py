@@ -129,14 +129,27 @@ with open(filename, "r") as f:
     data = json.load(f)
 
 while True:
-    setup_id = input("What would you like to set up? (f)ilters, (s)craper, (e)maill, or (q)uit: ")
+    setup_id = input("What would you like to set up? (f)ilters, (s)craper, (e)mail, or (q)uit: ")
 
     if setup_id == "f":
         # Filter setup
         print("--- Filter Setup ---")
         print("-------------------------------")
+        print("ALLOWED_MAKES is a list of car brands to let through. ")
+        print("It is case insensitive.")
 
-        
+        makes = []
+
+        list_item = input("Enter a make or (q) to quit: ")
+        makes.append(list_item)
+
+
+        while not list_item.lower() == "q":
+            list_item = input("Enter a make or (q) to quit: ")
+            makes.append(list_item)
+
+
+
     elif setup_id == "s":
         # scraper setup
         print("--- Scraper Setup ---")
