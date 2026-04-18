@@ -25,7 +25,7 @@ jobs:
           pyinstaller --onefile scraper.py
           pyinstaller --onefile search.py
           pyinstaller --onefile setup.py
-          python -c "import shutil; shutil.copy("settings.example.json","dist/")
+          python -c "import shutil; shutil.copy('settings.example.json','dist/')"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
