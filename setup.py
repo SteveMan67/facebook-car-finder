@@ -141,30 +141,24 @@ while True:
         makes = []
 
         list_item = input("Enter a make or (q) to quit: ")
-        if not list_item.lower() == "q":
-            makes.append(list_item)
-
 
         while not list_item.lower() == "q":
-            list_item = input("Enter a make or (q) to quit: ")
             makes.append(list_item)
+            list_item = input("Enter a make or (q) to quit: ")
 
         data["ALLOWED_MAKES"] = makes
         
         print("-------------------------------")
-        print("ALLOWED_MODELS is a list of car brands to let through. ")
+        print("ALLOWED_MODELS is a list of car models to let through. ")
         print("It is case insensitive.")
 
         models = []
 
         list_item = input("Enter a model or (q) to quit: ")
-        if not list_item.lower() == "q":
-            models.append(list_item)
-
 
         while not list_item.lower() == "q":
-            list_item = input("Enter a make or (q) to quit: ")
             models.append(list_item)
+            list_item = input("Enter a model or (q) to quit: ")
 
         data["ALLOWED_MODELS"] = models
 
@@ -175,14 +169,11 @@ while True:
 
         exclude = []
 
-        list_item = input("Enter a model or (q) to quit: ")
-        if not list_item.lower() == "q":
-            exclude.append(list_item)
-
+        list_item = input("Enter a term or (q) to quit: ")
 
         while not list_item.lower() == "q":
-            list_item = input("Enter a make or (q) to quit: ")
             exclude.append(list_item)
+            list_item = input("Enter an term or (q) to quit: ")
 
         data["EXCLUDED_TERMS"] = models
 
@@ -310,13 +301,10 @@ while True:
         emails = []
 
         list_item = input("Enter an email or (q) to quit: ")
-        if not list_item.lower() == "q":
-            emails.append(list_item)
-
 
         while not list_item.lower() == "q":
-            list_item = input("Enter a make or (q) to quit: ")
             emails.append(list_item)
+            list_item = input("Enter an email or (q) to quit: ")
 
         data["SENDER_ADDRESS"] = emails
 
