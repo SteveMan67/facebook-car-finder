@@ -31,3 +31,4 @@ jobs:
         with:
           name: executables-${{ matrix.os }}
           path: dist/*
+          settings.example.json
