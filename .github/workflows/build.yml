@@ -30,5 +30,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: executables-${{ matrix.os }}
-          path: dist/*
-          settings.example.json
+          path: |
+            dist/*
+            settings.example.json
