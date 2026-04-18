@@ -134,4 +134,5 @@ print(f"found {car_count} total, {len(new_cars)} new cars matching search parame
 
 # send_notification("New Car Listings", [["1902 Rick Astley", 100, -2000, "platformed.jmeow.net", 1902, "Old England"]])
 
+input()
 

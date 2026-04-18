@@ -109,7 +109,6 @@ def run_scraper():
         else:
             browser_context = p.chromium.launch_persistent_context(
                 executable_path=CHROME_PATH,
-                channel="chrome",
                 headless=False,
                 user_data_dir=USER_PATH,
                 )
@@ -123,8 +122,12 @@ def run_scraper():
         page.wait_for_selector('a[href*="/marketplace/item"]')
         page.wait_for_timeout(3000)
 
+        # grab the first listings we see
+        listings = page.locator('a[href*="/marketplace/item/"]').all()
+        parse_data(listings)
+
         for i in range(SCROLLS):
-            total_scroll = random.randint(1200, 3000)
+            total_scroll = random.randint(2000, 5000)
             scrolled = 0
 
             while scrolled < total_scroll:
@@ -135,12 +138,14 @@ def run_scraper():
 
             page.wait_for_timeout(random.randint(500, 2000))
 
+            # randomly scroll back up
             if random.random() < 0.1:
                 back_chunk = random.randint(100, 300)
                 page.evaluate(f"window.scrollBy({{top: -{back_chunk}, left: 0, behavior: 'smooth'}})")
                 page.wait_for_timeout(random.randint(500, 1500))
 
-            if (i % 3 == 0):
+            # grab listings every two scrolls to make sure we don't miss any if they get deleted
+            if (i % 2 == 0):
                 listings = page.locator('a[href*="/marketplace/item/"]').all()
                 parse_data(listings)
 
