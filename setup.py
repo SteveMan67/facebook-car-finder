@@ -82,43 +82,7 @@ def create_temp_dir(system):
 
 
 def get_profile_path(system):
-    profiles, data_dir = get_profiles(system)
-    if not data["USER_PATH"] and input("Use existing setting? (y/n): ") == "y":
-        return data["USER_PATH"]
-
-    if len(profiles) == 0 or not os.path.exists(data_dir):
-        # No user profiles found, ask to create temporary directory
-        print("error finding user profiles")
-        user_temp = input("Automatically create temporary directory? (y/n): ")
-        if user_temp.lower() == "y":
-            return create_temp_dir(system)
-        else:
-            if input("Use custom path? (y/n): "):
-                return input("Enter Custom Path: ")
-            else:
-                print("Skipping USER_PATH")
-    else:
-        idx = 1
-        dirs = []
-
-        print("WARNING: Using an existing profile may lead to issues with the lock file, using a new profile is reccomended")
-
-        print("0: [Create New Profile]")
-
-        for dir_name, display_name in profiles.items():
-            print(f"{idx}: {display_name} ({dir_name})")
-            dirs.append(dir_name)
-            idx += 1
-        
-        choice = input("Select Profile (num): ")
-        if choice == "0":
-            selected_path = os.path.join(data_dir, "ScraperProfile")
-            return selected_path
-        else:
-            dir_name = dirs[int(choice) - 1]
-            selected_path = os.path.join(data_dir, dir_name)
-            print(f"Using: {selected_path}")
-            return selected_path
+    return create_temp_dir(system)
 
 # create the settings.json file from settings.template.json if it doesn't exist
 if os.path.exists(template) and not os.path.exists(filename):
@@ -220,33 +184,16 @@ while True:
             data["USER_PATH"] = get_profile_path(system)
             print(f"Using directory {data['USER_PATH']}")
 
-        print("-------------------------------")
-        print("SCROLLS is the number of times the scraper will scroll down the page")
-        print("Roughly 20-50 is a good number")
+        data["SCROLLS"] = 100
 
-        data["SCROLLS"] = int(input("Input number of scrolls: "))
-
-        print("-------------------------------")
-        print("PURGE_DB_ON_START determines whether or not to clear the database of cars every time we scrape.")
-
-        wipe_db = input("Wipe the database on start? (y/n): ")
-        
-        if wipe_db.lower() == "y":
-            data["PURGE_DB_ON_START"] = True
-        else:
-            data["PURGE_DB_ON_START"] = False
+        data["PURGE_DB_ON_START"] = False
 
         print("-------------------------------")
         print("FACEBOOK_URL is the url that the scraper will go to in order to find cars.")
         print("If you want to filter the search results more or only search within a specific radius, go to marketplace and apply those filters, then just copy the url here.")
         print("It is highly reccomended to do this as this is how you will get cars for your location.")
 
-        skip = input("Skip? (y/n): ")
-
-        if skip.lower() == "y":
-            print("skipping url (be sure to make sure it's valid)")
-        else:
-            data["FACEBOOK_URL"] = input("Enter the url here: ")
+        data["FACEBOOK_URL"] = input("Enter the url here: ")
 
         # Now we need to open that chrome profile so they can log into facebook
         print("-------------------------------")
@@ -282,6 +229,7 @@ while True:
 
     elif setup_id == "e":
         # Email setup
+        data["SEND_NOTIFICATIONS"] = True
         print("--- Email Setup ---")
         print("-------------------------------")
         print("In order to send emails, you need a gmail account and the app password from that account.")
@@ -306,7 +254,7 @@ while True:
             emails.append(list_item)
             list_item = input("Enter an email or (q) to quit: ")
 
-        data["SENDER_ADDRESS"] = emails
+        data["RECIEVER_ADDRESS"] = emails
 
  
     elif setup_id == "q":

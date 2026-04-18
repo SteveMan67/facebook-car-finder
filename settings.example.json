@@ -18,7 +18,7 @@
   "USER_PATH": "C:\\Temp\\ChromeScraper",
   "CHROME_PATH": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
 
-  "SEND_NOTIFICATIONS": true,
+  "SEND_NOTIFICATIONS": false,
   "SMTP_SERVER": "smtp.gmail.com",
   "PORT_NUMBER": 587,
 
