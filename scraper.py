@@ -58,14 +58,14 @@ def add_car(title, price, url, mileage, location, year=None):
 
 def parse_data(listings):
     for item in listings:
-        href = item.get_attribute("href")
-        clean_url = "https://facebook.com" + href.split("?")[0]
-
-        raw_text = item.inner_text().split("\n")
-        if (len(raw_text)) < 4:
-            continue
-
         try:
+            href = item.get_attribute("href")
+            clean_url = "https://facebook.com" + href.split("?")[0]
+
+            raw_text = item.inner_text().split("\n")
+            if (len(raw_text)) < 4:
+                continue
+
             raw_price = raw_text[0]
 
             if raw_price == 'Free':
@@ -117,10 +117,19 @@ def run_scraper():
 
         page = browser_context.new_page()
 
+
         print("visiting marketplace")
         page.goto(FACEBOOK_URL)
         page.wait_for_selector('a[href*="/marketplace/item"]')
         page.wait_for_timeout(3000)
+
+        client = page.context.new_cdp_session(page)
+        client.send("Emulation.setDeviceMetricsOverride", {
+            "width": 1920,
+            "height": 1080,
+            "deviceScaleFactor": 0.5,
+            "mobile": False,
+            })
 
         # grab the first listings we see
         listings = page.locator('a[href*="/marketplace/item/"]').all()
@@ -145,9 +154,8 @@ def run_scraper():
                 page.wait_for_timeout(random.randint(500, 1500))
 
             # grab listings every two scrolls to make sure we don't miss any if they get deleted
-            if (i % 2 == 0):
-                listings = page.locator('a[href*="/marketplace/item/"]').all()
-                parse_data(listings)
+            listings = page.locator('a[href*="/marketplace/item/"]').all()
+            parse_data(listings)
 
         page.wait_for_timeout(2000)
 
