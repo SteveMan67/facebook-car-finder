@@ -96,7 +96,7 @@ def parse_data(listings):
 
 
 def run_scraper():
-    with sync_playwright() as p: 
+    with sync_playwright() as p:
 
         browser_context = None
 
@@ -105,12 +105,14 @@ def run_scraper():
                 executable_path=CHROME_PATH,
                 user_data_dir=USER_PATH,
                 headless=True,
+                args=["--disable-gpu"]
                 )
         else:
             browser_context = p.chromium.launch_persistent_context(
                 executable_path=CHROME_PATH,
                 headless=False,
                 user_data_dir=USER_PATH,
+                args=["--disable-gpu"]
                 )
 
         print("context launched!")
@@ -154,8 +156,10 @@ def run_scraper():
                 page.wait_for_timeout(random.randint(500, 1500))
 
             # grab listings every two scrolls to make sure we don't miss any if they get deleted
-            listings = page.locator('a[href*="/marketplace/item/"]').all()
-            parse_data(listings)
+            if i % 2 == 0:
+                listings = page.locator('a[href*="/marketplace/item/"]').all()
+                parse_data(listings)
+            print(f"--- PROGRESS: {i}/{SCROLLS} ---")
 
         page.wait_for_timeout(2000)
 

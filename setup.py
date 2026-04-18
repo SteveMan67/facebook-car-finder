@@ -150,9 +150,9 @@ while True:
         print("-------------------------------")
         data["MIN_MILEAGE"] = input("Enter the minimum mileage: ")
         print("-------------------------------")
-        data["MIN_YEAR"] = input("Enter the minimum year: ")
-        print("-------------------------------")
         data["MAX_YEAR"] = input("Enter the maximum year: ")
+        print("-------------------------------")
+        data["MIN_YEAR"] = input("Enter the minimum year: ")
         print("-------------------------------")
 
     elif setup_id == "s":
