@@ -128,12 +128,12 @@ def run_scraper():
             scrolled = 0
 
             while scrolled < total_scroll:
-                chunk = random.randint(20, 80)
+                chunk = random.randint(50, 100)
                 page.evaluate(f"window.scrollBy({{top: {chunk}, left: 0, behavior: 'smooth'}})")
                 scrolled += chunk
                 page.wait_for_timeout(random.randint(10,50))
 
-            page.wait_for_timeout(random.randint(1500, 4000))
+            page.wait_for_timeout(random.randint(500, 2000))
 
             if random.random() < 0.1:
                 back_chunk = random.randint(100, 300)

@@ -141,14 +141,64 @@ while True:
         makes = []
 
         list_item = input("Enter a make or (q) to quit: ")
-        makes.append(list_item)
+        if not list_item.lower() == "q":
+            makes.append(list_item)
 
 
         while not list_item.lower() == "q":
             list_item = input("Enter a make or (q) to quit: ")
             makes.append(list_item)
 
+        data["ALLOWED_MAKES"] = makes
+        
+        print("-------------------------------")
+        print("ALLOWED_MODELS is a list of car brands to let through. ")
+        print("It is case insensitive.")
 
+        models = []
+
+        list_item = input("Enter a model or (q) to quit: ")
+        if not list_item.lower() == "q":
+            models.append(list_item)
+
+
+        while not list_item.lower() == "q":
+            list_item = input("Enter a make or (q) to quit: ")
+            models.append(list_item)
+
+        data["ALLOWED_MODELS"] = models
+
+        print("-------------------------------")
+        print("EXCLUDED_TERMS is a list of terms to exclude")
+        print("If the title of a listing contains one of the items in the list, it will be filtered out.")
+        print("It is (also) case insensitive.")
+
+        exclude = []
+
+        list_item = input("Enter a model or (q) to quit: ")
+        if not list_item.lower() == "q":
+            exclude.append(list_item)
+
+
+        while not list_item.lower() == "q":
+            list_item = input("Enter a make or (q) to quit: ")
+            exclude.append(list_item)
+
+        data["EXCLUDED_TERMS"] = models
+
+        print("-------------------------------")
+        data["MAX_PRICE"] = input("Enter the maxiumum price: ")
+        print("-------------------------------")
+        data["MIN_PRICE"] = input("Enter the minimum price: ")
+        print("-------------------------------")
+        data["MAX_MILEAGE"] = input("Enter the maximum mileage: ")
+        print("-------------------------------")
+        data["MIN_MILEAGE"] = input("Enter the minimum mileage: ")
+        print("-------------------------------")
+        data["MIN_YEAR"] = input("Enter the minimum year: ")
+        print("-------------------------------")
+        data["MAX_YEAR"] = input("Enter the maximum year: ")
+        print("-------------------------------")
 
     elif setup_id == "s":
         # scraper setup
@@ -242,9 +292,44 @@ while True:
     elif setup_id == "e":
         # Email setup
         print("--- Email Setup ---")
+        print("-------------------------------")
+        print("In order to send emails, you need a gmail account and the app password from that account.")
+        print("This is different than the password you use to sign in. ")
+        print("In order to get it, go to your google account settings and search for 'App Password'")
+        print("2fa has to be on.")
+        print("It should be a 16 digit string with spaces between every 4 characters.")
+
+        data["APP_PASSWORD"] = input("Enter it here: ")
+
+        print("-------------------------------")
+        data["SENDER_ADDRESS"] = input("Enter the email that the app password is from: ")
+
+        print("-------------------------------")
+        print("RECIEVER_ADDRESS is a list of all the addresses to send the new items to.")
+
+        emails = []
+
+        list_item = input("Enter an email or (q) to quit: ")
+        if not list_item.lower() == "q":
+            emails.append(list_item)
+
+
+        while not list_item.lower() == "q":
+            list_item = input("Enter a make or (q) to quit: ")
+            emails.append(list_item)
+
+        data["SENDER_ADDRESS"] = emails
+
 
     elif setup_id == "q":
         print("exiting...")
         break
     else:
         print("invalid option")
+
+print("Saving to settings.json...")
+
+with open(filename, "w") as f:
+    json.dump(data, f, indent=4)
+
+print("You're all set! Have a nice day.")
