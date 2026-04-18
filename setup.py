@@ -139,21 +139,20 @@ while True:
             exclude.append(list_item)
             list_item = input("Enter an term or (q) to quit: ")
 
-        data["EXCLUDED_TERMS"] = models
+        data["EXCLUDED_TERMS"] = exclude
 
         print("-------------------------------")
         data["MAX_PRICE"] = input("Enter the maxiumum price: ")
         print("-------------------------------")
-        data["MIN_PRICE"] = input("Enter the minimum price: ")
-        print("-------------------------------")
         data["MAX_MILEAGE"] = input("Enter the maximum mileage: ")
-        print("-------------------------------")
-        data["MIN_MILEAGE"] = input("Enter the minimum mileage: ")
-        print("-------------------------------")
-        data["MAX_YEAR"] = input("Enter the maximum year: ")
         print("-------------------------------")
         data["MIN_YEAR"] = input("Enter the minimum year: ")
         print("-------------------------------")
+
+        print("Saving to settings.json")
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
+        print("Saved!")
 
     elif setup_id == "s":
         # scraper setup
@@ -192,6 +191,7 @@ while True:
         print("FACEBOOK_URL is the url that the scraper will go to in order to find cars.")
         print("If you want to filter the search results more or only search within a specific radius, go to marketplace and apply those filters, then just copy the url here.")
         print("It is highly reccomended to do this as this is how you will get cars for your location.")
+        print("It should start with https://")
 
         data["FACEBOOK_URL"] = input("Enter the url here: ")
 
@@ -226,6 +226,10 @@ while True:
         if not successful:
             print(f"Opening Chrome failed after {max_tries} tries")
 
+        print("Saving to settings.json")
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
+        print("Saved!")
 
     elif setup_id == "e":
         # Email setup
@@ -256,6 +260,10 @@ while True:
 
         data["RECIEVER_ADDRESS"] = emails
 
+        print("Saving to settings.json")
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
+        print("Saved!")
  
     elif setup_id == "q":
         print("exiting...")
@@ -268,4 +276,4 @@ print("Saving to settings.json...")
 with open(filename, "w") as f:
     json.dump(data, f, indent=4)
 
-print("You're all set! Have a nice day.")
+print("You're all set. Have a nice day!")
