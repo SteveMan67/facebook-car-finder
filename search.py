@@ -1,9 +1,11 @@
 import sqlite3
-from settings import *
 from secrets import *
 import smtplib
 from email.message import EmailMessage
+import json
 
+with open("settings.json", "r") as file:
+    globals().update(json.load(file))
 
 conn = sqlite3.connect("cars.db")
 cursor = conn.cursor()
@@ -16,7 +18,7 @@ rows = cursor.fetchall()
 
 print(f"db contains {len(rows)} rows")
 
-if PURGE_DB:
+if PURGE_VIEWED_DB:
     cursor.execute('''
                 DROP TABLE IF EXISTS viewed
                    ''')
@@ -115,7 +117,6 @@ for row in rows:
             conn.commit()
             new_cars.append(row)
             print("!!! NEW !!!")
-            # TODO send email or notification for a new car
         except Exception as e:
             pass
         car_count += 1

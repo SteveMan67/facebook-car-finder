@@ -1,11 +1,13 @@
-from contextlib import nullcontext
 import sqlite3
 from playwright.sync_api import sync_playwright
 from datetime import datetime
 import random
-from settings import *
+import json
 
-conn = sqlite3.connect(cars.db)
+with open("settings.json", "r") as file:
+    globals().update(json.load(file))
+
+conn = sqlite3.connect("cars.db")
 cursor = conn.cursor()
 
 def init_db(): 
@@ -85,7 +87,7 @@ def parse_data(listings):
 
             year = title.split(" ")[0]
 
-            print(f"Saved: {title} | ${price} | {mileage}mi | {clean_url} | {year}")
+            print(f"{title} | ${price} | {mileage}mi | {clean_url} | {year}")
 
             add_car(title, price, clean_url, mileage, location, year)
 

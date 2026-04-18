@@ -31,7 +31,7 @@ Choose whether chrome will run in a window or hidden (headless). You will need t
 
 `FACEBOOK_URL`
 
-Chooses the facebook page to scrape. I set it to search for stickshifts within 100 miles of tulsa. You can just go to facebook, apply the filters you want (assuming the work, which is not a given), copy that url and put it here.
+Chooses the facebook page to scrape. I set it to search for stickshifts within 100 miles of tulsa. You can just go to facebook, apply the filters you want (assuming they work, which is not a given), copy that url and put it here.
 
 `PURGE_DB_ON_START`
 

@@ -48,11 +48,11 @@ SCROLLS = 20
 RUN_HEADLESS = True
 
 # -- NOTIFICATION SETUP
-#
+
 # You need to create a python file called secrets.py in order to get email notifications.
 # You will also need to install smtplib.
-#
-SEND_NOTIFICATIONS = False
+
+SEND_NOTIFICATIONS = True
 
 # Don't change this unless you want to use a different email address
 SMTP_SERVER = "smtp.gmail.com"
