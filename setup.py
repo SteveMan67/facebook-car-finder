@@ -142,7 +142,7 @@ while True:
         data["EXCLUDED_TERMS"] = exclude
 
         print("-------------------------------")
-        data["MAX_PRICE"] = input("Enter the maxiumum price: ")
+        data["MAX_PRICE"] = input("Enter the maximum price: ")
         print("-------------------------------")
         data["MAX_MILEAGE"] = input("Enter the maximum mileage: ")
         print("-------------------------------")

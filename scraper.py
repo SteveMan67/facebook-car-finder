@@ -3,6 +3,10 @@ from playwright.sync_api import sync_playwright
 from datetime import datetime
 import random
 import json
+import sys
+
+# so emojis don't break the script
+sys.stdout.reconfigure(encoding='utf-8')
 
 with open("settings.json", "r") as file:
     globals().update(json.load(file))
@@ -59,7 +63,7 @@ def add_car(title, price, url, mileage, location, year=None):
 def parse_data(listings):
     for item in listings:
         try:
-            href = item.get_attribute("href")
+            href = item.get_attribute("href", timeout=1000)
             clean_url = "https://facebook.com" + href.split("?")[0]
 
             raw_text = item.inner_text().split("\n")
@@ -98,22 +102,31 @@ def parse_data(listings):
 def run_scraper():
     with sync_playwright() as p:
 
-        browser_context = None
+        # broweser context only opens sometimes, try 15 times to open it
 
-        if RUN_HEADLESS:
-            browser_context = p.chromium.launch_persistent_context(
-                executable_path=CHROME_PATH,
-                user_data_dir=USER_PATH,
-                headless=True,
-                args=["--disable-gpu"]
-                )
-        else:
-            browser_context = p.chromium.launch_persistent_context(
-                executable_path=CHROME_PATH,
-                headless=False,
-                user_data_dir=USER_PATH,
-                args=["--disable-gpu"]
-                )
+        tries = 0
+        sucess = False
+
+        while tries < 15 and not sucess:
+            try:
+                if RUN_HEADLESS:
+                    browser_context = p.chromium.launch_persistent_context(
+                        executable_path=CHROME_PATH,
+                        user_data_dir=USER_PATH,
+                        headless=True,
+                        args=["--disable-gpu"]
+                        )
+                else:
+                    browser_context = p.chromium.launch_persistent_context(
+                        executable_path=CHROME_PATH,
+                        headless=False,
+                        user_data_dir=USER_PATH,
+                        args=["--disable-gpu"]
+                        )
+
+                sucess = True
+            except: 
+                tries += 1
 
         print("context launched!")
 

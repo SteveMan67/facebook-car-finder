@@ -2,6 +2,12 @@
 
 This is a marketplace scraper built for searching for cars. I made it because the facebook marketplace filters are very broken. Also I'm looking for a car, you can probably tell which one by the default config in settings.py.
 
+### **HOW IT WORKS**
+
+`scraper.exe`. is for saving cars from marketplace into a database. It will open chrome, go to the url provided, and save all the cars it finds. By changing the url, you can filter it even more than you could in `settings.json`. For example, say I'm looking for a stickshift car in Dallas, I would go to facebook marketplace, apply those filters, then copy the url into `FACEBOOK_URL`. It's best not to apply too many filters as facebook marketplace is really bad about applying multiple filters at once.
+
+Once you've scraped to your heart's content, you can filter those results with `search.py`. That searches through the database of cars that you've scraped and filters it down according to your `settings.json`.
+
 ---
 
 ### **Setting up the scraper**
