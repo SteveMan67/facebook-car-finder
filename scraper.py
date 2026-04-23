@@ -135,7 +135,16 @@ def run_scraper():
 
         print("visiting marketplace")
         page.goto(FACEBOOK_URL)
-        page.wait_for_selector('a[href*="/marketplace/item"]')
+        try: 
+            page.wait_for_selector('a[href*="/marketplace/item"]')
+        except:
+            print("Error getting page listings")
+            print('Try setting "HEADLESS": false in settings.json. ')
+            print('There may be a CAPTCHA or something else in the way.')
+            input('Press any key to exit.')
+
+            sys.exit(0)
+            
         page.wait_for_timeout(3000)
 
         client = page.context.new_cdp_session(page)
