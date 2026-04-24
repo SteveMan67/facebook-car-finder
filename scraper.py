@@ -5,32 +5,40 @@ import random
 import json
 import sys
 
+
+
 # so emojis don't break the script
 sys.stdout.reconfigure(encoding='utf-8')
 
 with open("settings.json", "r") as file:
     globals().update(json.load(file))
 
-conn = sqlite3.connect("cars.db")
+category = "Unkown"
+
+if "vehicles" in FACEBOOK_URL.lower():
+    category = "Vehicle"
+
+conn = sqlite3.connect("listings.db")
 cursor = conn.cursor()
 
 def init_db(): 
 
-    if PURGE_DB_ON_START:
-        cursor.execute('''
-            DROP TABLE IF EXISTS cars 
-                       ''')
+    cursor.execute('''
+        DROP TABLE IF EXISTS cars;
+                    ''')
 
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS cars (
+        DROP TABLE IF EXISTS listings;
+                    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS listings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             price INTEGER,
             url TEXT UNIQUE,
-            year INTEGER,
-            model TEXT,
-            make TEXT,
-            mileage INTEGER,
+            category TEXT NOT NULL,
+            metadata TEXT,
             location TEXT,
             scraped_date TEXT
         )
@@ -38,23 +46,24 @@ def init_db():
     conn.commit()
     print("database ready")
 
-def add_car(title, price, url, mileage, location, year=None):
+def add_listing(title, price, url, location, metadata):
+    metadata = json.dumps(metadata)
     try:
+        # insert it into the db
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cursor.execute('''
-            INSERT INTO cars (title, price, url, year, mileage, location, scraped_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-                       ''', (title, price, url, year, mileage, location, now))
+            INSERT INTO listings (title, price, url, location, metadata, scraped_date, category)
+            VALUES (?, ?, ?, ?, ?, ?,  ?)
+                       ''', (title, price, url, location, metadata, now, category))
         conn.commit()
     except sqlite3.IntegrityError:
-        pass
-        # car already exists in db
+        # update the current listing in the db
         try:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             cursor.execute('''
-                UPDATE cars set title = ?, price = ?, year = ?, mileage = ?, location = ?, scraped_date = ? WHERE url = ?
-                        ''', (title, price, year, mileage, location, now, url))
+                UPDATE listings set title = ?, price = ?, location = ?, metadata = ?, scraped_date = ?, category = ? WHERE url = ?
+                        ''', (title, price, location, metadata, now, url, category))
             conn.commit()
         except: 
             print(f"Could not add {title}")
@@ -81,28 +90,19 @@ def parse_data(listings):
 
             title = raw_text[1 + shift]
             location = raw_text[2 + shift]
-            raw_mileage = raw_text[3 + shift] if len(raw_text) >= 4 + shift else 0
 
-            if 'K' in raw_mileage:
-                mileage_str = raw_mileage.split("K")[0]
-                mileage = int(float(mileage_str) * 1000)
-            else:
-                mileage = int(''.join(filter(str.isdigit, raw_mileage)) or 0)
+            print(f"{title} | ${price} | {clean_url} ")
 
-            year = title.split(" ")[0]
-
-            print(f"{title} | ${price} | {mileage}mi | {clean_url} | {year}")
-
-            add_car(title, price, clean_url, mileage, location, year)
+            add_listing(title, price, clean_url, location, raw_text)
 
         except Exception as e:
-            print(f"Parse error: {raw_text} -> {e}")
+            print(f"Parse error for listing -> {e}")
 
 
 def run_scraper():
     with sync_playwright() as p:
 
-        # broweser context only opens sometimes, try 15 times to open it
+        # browser context only opens sometimes, try 15 times to open it
 
         tries = 0
         sucess = False

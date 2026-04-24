@@ -7,10 +7,10 @@ import json
 with open("settings.json", "r") as file:
     globals().update(json.load(file))
 
-conn = sqlite3.connect("cars.db")
+conn = sqlite3.connect("listings.db")
 cursor = conn.cursor()
 
-cursor.execute('''SELECT title from cars where 1 = 1''')
+cursor.execute('''SELECT title from listings where 1 = 1''')
 
 conn.commit()
 
@@ -29,23 +29,21 @@ cursor.execute('''
                     title TEXT NOT NULL,
                     price INTEGER,
                     url TEXT UNIQUE,
-                    mileage INTEGER,
-                    year INTEGER,
                     location TEXT
                 )
                ''')
 
-cursor.execute('''SELECT title, price, mileage, url, year, location
-               FROM cars 
-               WHERE price <= ? AND price >= ? AND mileage <= ? AND mileage >= ? AND year <= ? AND year >= ?''', 
-               (MAX_PRICE, MIN_PRICE, MAX_MILEAGE, MIN_MILEAGE, MAX_YEAR, MIN_YEAR))
+cursor.execute('''SELECT title, price, url, location, category, metadata
+               FROM listings 
+               WHERE price <= ? AND price >= ?''', 
+               (MAX_PRICE, MIN_PRICE))
 conn.commit()
 
 rows = cursor.fetchall()
 
-car_count = 0
+listing_count = 0
 
-new_cars = []
+new_listings = []
 
 def send_notification(subject, new_items):
     sender = SENDER_ADDRESS
@@ -56,7 +54,7 @@ def send_notification(subject, new_items):
     msg['From'] = sender
     msg['To'] = ", ".join(RECIEVER_ADDRESSES)
 
-    body = "New cars found:\n\n"
+    body = "New Listings found:\n\n"
     for item in new_items:
         print(item)
         body += "---------------------------------\r"
@@ -75,27 +73,36 @@ def send_notification(subject, new_items):
         server.login(sender, pwd)
         server.send_message(msg)
 
+def get_data_from_row(row):
+    out = {}
+    out["title"] = row[0]
+    out["price"] = row[1]
+    out["url"] = row[2]
+    out["location"] = row[3]
+    out["category"] = row[4]
+    out["metadata"] = json.loads(row[5])
+
+    if out["category"] == "Vehicle":
+        metadata = out["metadata"]
+        shift = 1 if metadata[1].startswith("$") else 0
+        raw_mileage = metadata[3 + shift]
+        if "K" in raw_mileage:
+            mileage_str = raw_mileage.split("K")[0]
+            mileage = int(float(mileage_str) * 1000)
+        else:
+            mileage = (''.join(filter(str.isdigit, raw_mileage)))
+
+        out["mileage"] = mileage
+    return out
+
 for row in rows:
+    data = get_data_from_row(row)
     filtered_make = False
-
-    if ALLOWED_MAKES == []:
-        filtered_make = True
-    
-    for make in ALLOWED_MAKES:
-        filtered_make = True if make.lower() in row[0].lower() or filtered_make else False
-
-    filtered_model = False
-
-    if ALLOWED_MODELS == []:
-        filtered_model = True
-
-    for model in ALLOWED_MODELS:
-        filtered_model = True if model.lower() in row[0].lower() or filtered_model else False
 
     has_excluded_term = False
 
     for term in EXCLUDED_TERMS:
-        has_excluded_term = True if term.lower() in row[0].lower() or has_excluded_term else False
+        has_excluded_term = True if term.lower() in data["title"].lower() or has_excluded_term else False
 
     has_included_terms = False
 
@@ -103,10 +110,31 @@ for row in rows:
         has_included_terms = True
     else:
         for term in INCLUDED_TERMS:
-            has_included_terms = True if term.lower() in row[0].lower() or has_included_terms else False
+            has_included_terms = True if term.lower() in data["title"].lower() or has_included_terms else False
+
+    has_second_included_term = False
+
+    if INCLUDED_TERMS_TWO == []:
+        has_second_included_term = True
+    else:
+        for term in INCLUDED_TERMS_TWO:
+            has_second_included_term = True if term.lower() in data["title"].lower() or has_second_included_term else False
+
+    passes_category = True
+
+    if data["category"] == "Vehicle":
+        passes_category = False
+
+        correct_mileage = data["mileage"] >= MIN_MILEAGE and data["mileage"] <= MAX_MILEAGE
+
+        year = int(data["title"].split(" ")[0])
+        correct_year = year >= MIN_YEAR and year <= MAX_YEAR
+
+        passes_category = correct_mileage and correct_year
 
 
-    if filtered_make and filtered_model and not has_excluded_term and has_included_terms:
+
+    if not has_excluded_term and has_included_terms and has_second_included_term and passes_category:
         print("--------------------------------------")
         try:
             cursor.execute('''
@@ -115,24 +143,21 @@ for row in rows:
                            ''', (row[3], row[0], row[1], row[2], row[4], row[5]))
 
             conn.commit()
-            new_cars.append(row)
+            new_listings.append(row)
             print("!!! NEW !!!")
         except Exception as e:
             pass
-        car_count += 1
+        listing_count += 1
         print(row[0])
         print(f'${row[1]}')
         print(f'Mileage: {row[2]}')
         print(f'Location: {row[5]}')
         print(f'url: {row[3]}')
 
-if len(new_cars) > 0 and SEND_NOTIFICATIONS:
-    send_notification("New Car Listings", new_cars)
+if len(new_listings) > 0 and SEND_NOTIFICATIONS:
+    send_notification("New Listings Found", new_listings)
 
 print("")
-print(f"found {car_count} total, {len(new_cars)} new cars matching search parameters")
-
-# send_notification("New Car Listings", [["1902 Rick Astley", 100, -2000, "platformed.jmeow.net", 1902, "Old England"]])
+print(f"found {listing_count} total, {len(new_listings)} new listings matching search parameters")
 
 input()
-
