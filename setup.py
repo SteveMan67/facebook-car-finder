@@ -99,55 +99,91 @@ while True:
         # Filter setup
         print("--- Filter Setup ---")
         print("-------------------------------")
-        print("ALLOWED_MAKES is a list of car brands to let through. ")
-        print("It is case insensitive.")
+        
+        print("What type of thing are you scraping?")
+        print('if it\'s not on the list, then it will default to "Generic"')
+        category = input("(v)ehicles, (n)one: ")
 
-        makes = []
+        if category.lower() == "v":
+            print("Vehicle Scraping")
+            print("This is a list of car brands to let through. ")
+            print("It is case insensitive.")
 
-        list_item = input("Enter a make or (q) to quit: ")
+            makes = []
 
-        while not list_item.lower() == "q":
-            makes.append(list_item)
             list_item = input("Enter a make or (q) to quit: ")
 
-        data["ALLOWED_MAKES"] = makes
-        
-        print("-------------------------------")
-        print("ALLOWED_MODELS is a list of car models to let through. ")
-        print("It is case insensitive.")
+            while not list_item.lower() == "q":
+                makes.append(list_item)
+                list_item = input("Enter a make or (q) to quit: ")
 
-        models = []
+            data["INCLUDED_TERMS"] = makes
 
-        list_item = input("Enter a model or (q) to quit: ")
+            print("-------------------------------")
+            print("This is a list of car models to let through. ")
+            print("It is case insensitive.")
 
-        while not list_item.lower() == "q":
-            models.append(list_item)
+            models = []
+
             list_item = input("Enter a model or (q) to quit: ")
 
-        data["ALLOWED_MODELS"] = models
+            while not list_item.lower() == "q":
+                models.append(list_item)
+                list_item = input("Enter a model or (q) to quit: ")
 
-        print("-------------------------------")
-        print("EXCLUDED_TERMS is a list of terms to exclude")
-        print("If the title of a listing contains one of the items in the list, it will be filtered out.")
-        print("It is (also) case insensitive.")
+            data["INCLUDED_TERMS_TWO"] = models
 
-        exclude = []
+            print("-------------------------------")
+            print("This is a list of terms to exclude")
+            print("If the title of a listing contains one of the items in the list, it will be filtered out.")
+            print("It is (also) case insensitive.")
 
-        list_item = input("Enter a term or (q) to quit: ")
+            exclude = []
 
-        while not list_item.lower() == "q":
-            exclude.append(list_item)
-            list_item = input("Enter an term or (q) to quit: ")
+            list_item = input("Enter a term or (q) to quit: ")
 
-        data["EXCLUDED_TERMS"] = exclude
+            while not list_item.lower() == "q":
+                exclude.append(list_item)
+                list_item = input("Enter an term or (q) to quit: ")
 
-        print("-------------------------------")
-        data["MAX_PRICE"] = input("Enter the maximum price: ")
-        print("-------------------------------")
-        data["MAX_MILEAGE"] = input("Enter the maximum mileage: ")
-        print("-------------------------------")
-        data["MIN_YEAR"] = input("Enter the minimum year: ")
-        print("-------------------------------")
+            data["EXCLUDED_TERMS"] = exclude
+
+            print("-------------------------------")
+            data["MAX_PRICE"] = input("Enter the maximum price: ")
+            print("-------------------------------")
+            data["MAX_MILEAGE"] = input("Enter the maximum mileage: ")
+            print("-------------------------------")
+            data["MIN_YEAR"] = input("Enter the minimum year: ")
+            print("-------------------------------")
+        else:
+            print("Generic Scraping")
+            print("INCLUDED_TERMS is a list of terms where if the title contains any of them, it will be let through.")
+
+            terms = []
+
+            list_item = input("Enter a term or (q) to quit: ")
+
+            while not list_item.lower() == "q":
+                terms.append(list_item)
+                list_item = input("Enter a term or (q) to quit: ")
+
+            data["INCLUDED_TERMS"] = terms
+
+            print("EXCLUDED_TERMS is a list of terms where if the title contains any of them, it will be filtered out.")
+
+            terms = []
+            
+            list_item = input("Enter a term or (q) to quit: ")
+
+            while not list_item.lower() == "q":
+                terms.append(list_item)
+                list_item = input("Enter a term or (q) to quit: ")
+
+            data["EXCLUDED_TERMS"] = terms
+
+            print("-------------------------------")
+            data["MAX_PRICE"] = input("Enter the maximum price")
+            print("-------------------------------")
 
         print("Saving to settings.json")
         with open(filename, "w") as f:
@@ -188,9 +224,8 @@ while True:
         data["PURGE_DB_ON_START"] = False
 
         print("-------------------------------")
-        print("FACEBOOK_URL is the url that the scraper will go to in order to find cars.")
-        print("If you want to filter the search results more or only search within a specific radius, go to marketplace and apply those filters, then just copy the url here.")
-        print("It is highly reccomended to do this as this is how you will get cars for your location.")
+        print("FACEBOOK_URL is the url that the scraper will go to in order to find listings.")
+        print("Without this, the program doesn't have anywhere to go and will fail.")
         print("It should start with https://")
 
         data["FACEBOOK_URL"] = input("Enter the url here: ")

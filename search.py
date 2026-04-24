@@ -22,6 +22,7 @@ if PURGE_VIEWED_DB:
     cursor.execute('''
                 DROP TABLE IF EXISTS viewed
                    ''')
+    conn.commit()
 
 cursor.execute('''
                 CREATE TABLE IF NOT EXISTS viewed (
@@ -56,13 +57,13 @@ def send_notification(subject, new_items):
 
     body = "New Listings found:\n\n"
     for item in new_items:
-        print(item)
         body += "---------------------------------\r"
-        body += f"{item[0]}\n" # Title
-        body += f"${item[1]}\n" # Price
-        body += f"{item[2]}mi\n" # Mileage
-        body += f"{item[5]}\n" # Location
-        body += f"{item[3]}\n" # url
+        body += f"{item['title']}\n" # Title
+        body += f"${item['price']}\n" # Price
+        body += f"{item['location']}\n" # Location
+        if item['category'] == "Vehicle":
+            body += f"{item['mileage']}mi\n" # Mileage
+        body += f"{item['url']}\n" # url
 
     body += "---------------------------------\r"
 
@@ -86,13 +87,17 @@ def get_data_from_row(row):
         metadata = out["metadata"]
         shift = 1 if metadata[1].startswith("$") else 0
         raw_mileage = metadata[3 + shift]
-        if "K" in raw_mileage:
+        mileage = 0
+        if 'K' in raw_mileage:
             mileage_str = raw_mileage.split("K")[0]
             mileage = int(float(mileage_str) * 1000)
+        elif 'M' in raw_mileage:
+            mileage_str = raw_mileage.split("M")[0]
+            mileage = int(float(mileage_str) * 1000000)
         else:
             mileage = (''.join(filter(str.isdigit, raw_mileage)))
 
-        out["mileage"] = mileage
+        out["mileage"] = int(mileage)
     return out
 
 for row in rows:
@@ -138,21 +143,23 @@ for row in rows:
         print("--------------------------------------")
         try:
             cursor.execute('''
-                        INSERT INTO viewed (url, title, price, mileage, year, location)
-                        VALUES (?, ?, ?, ?, ?, ?)
-                           ''', (row[3], row[0], row[1], row[2], row[4], row[5]))
+                        INSERT INTO viewed (url, title, price, location)
+                        VALUES (?, ?, ?, ?)
+                           ''', (data["url"], data["title"], data["price"], data["location"]))
 
             conn.commit()
-            new_listings.append(row)
+            new_listings.append(data)
             print("!!! NEW !!!")
-        except Exception as e:
+        except:
             pass
         listing_count += 1
         print(row[0])
-        print(f'${row[1]}')
-        print(f'Mileage: {row[2]}')
-        print(f'Location: {row[5]}')
-        print(f'url: {row[3]}')
+        print(f'${data["price"]}')
+        print(f'Location: {data["location"]}')
+        print(f'url: {data["url"]}')
+        
+        if data["category"] == "Vehicle":
+            print(f'Mileage: {data["mileage"]}mi')
 
 if len(new_listings) > 0 and SEND_NOTIFICATIONS:
     send_notification("New Listings Found", new_listings)

@@ -28,10 +28,6 @@ def init_db():
                     ''')
 
     cursor.execute('''
-        DROP TABLE IF EXISTS listings;
-                    ''')
-
-    cursor.execute('''
         CREATE TABLE IF NOT EXISTS listings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
