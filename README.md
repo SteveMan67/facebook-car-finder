@@ -1,12 +1,12 @@
 ## Facebook Marketplace Scraper
 
-This is a marketplace scraper built for searching for cars. I made it because the facebook marketplace filters are very broken. Also I'm looking for a car, you can probably tell which one by the default config in settings.py.
+This is a marketplace scraper, capable of searching through any type of listing. I made it because the facebook marketplace filters are very broken. Also I'm looking for a car, you can probably tell which one by the default config in settings.py.
 
 ### **HOW IT WORKS**
 
-`scraper.exe`. is for saving cars from marketplace into a database. It will open chrome, go to the url provided, and save all the cars it finds. By changing the url, you can filter it even more than you could in `settings.json`. For example, say I'm looking for a stickshift car in Dallas, I would go to facebook marketplace, apply those filters, then copy the url into `FACEBOOK_URL`. It's best not to apply too many filters as facebook marketplace is really bad about applying multiple filters at once.
+`scraper.exe`. is for saving listings from marketplace into a database. It will open chrome, go to the url provided, and save all the listings it finds. By changing the url, you can filter it even more than you could in `settings.json`. For example, say I'm looking for a stickshift car in Dallas, I would go to facebook marketplace, apply those filters, then copy the url into `FACEBOOK_URL`. It's best not to apply too many filters as facebook marketplace is really bad about applying multiple filters at once.
 
-Once you've scraped to your heart's content, you can filter those results with `search.py`. That searches through the database of cars that you've scraped and filters it down according to your `settings.json`.
+Once you've scraped to your heart's content, you can filter those results with `search.py`. That searches through the database of listings that you've scraped and filters it down according to your `settings.json`.
 
 ---
 
@@ -36,7 +36,7 @@ Choose whether chrome will run in a window or hidden (headless).
 
 `FACEBOOK_URL`
 
-Chooses the facebook page to scrape. I set it to search for stickshifts within 100 miles of tulsa. You can just go to facebook, apply the filters you want (assuming they work, which is not a given), copy that url and put it here.
+Chooses the facebook page to scrape. You can just go to facebook, apply the filters you want (assuming they work, which is not a given), copy that url and put it here.
 
 `PURGE_DB_ON_START`
 
@@ -50,9 +50,7 @@ How many times it should scroll the page down, by 1200-3000 pixels each time. Th
 
 Once you run the setup script and configure everything, you should be able to just run the python script either through the terminal (you probably use Linux if you choose this option) or by double clicking it.
 
-It might take a few tries to get an instance of chrome running. I think it's something to do with the gpu. I also think I fixed it but I may be wrong.
-
-It might take a minute or two to scrape, more if you set the `SCROLLS` to a ridiculously high number like I know you did. Once it's done it saves all the cars it found in the database.
+It might take a minute or two to scrape, more if you set the `SCROLLS` to a ridiculously high number like I know you did. Once it's done it saves all the listings it found in the database.
 
 ---
 
@@ -62,21 +60,17 @@ Once you've scraped to your hearts content, you'll probably want to filter the r
 
 **Here are the options:**
 
-`ALLOWED_MAKES`
-
-A list of car brands to let through the filter. Anything else is tossed. If left blank it will let any make in SO MAKE SURE THAT DOESN'T HAPPEN! We wouldn't want any Cadillacs getting in now would we?
-
-`ALLOWED_MODELS`
-
-Same as above, but for car models. If left blank it will let any make in.
-
 `EXCLUDED_TERMS`
 
 A list of search terms. If a listing's title contains one of these, it will be filtered out.
 
 `INCLUDED_TERMS`
 
-If a listing contains **ANY** of these terms, it will be let through, Otherwise it will get filtered out.
+If a listing title contains **ANY** of these terms, it will be let through, Otherwise it will get filtered out.
+
+`INCLUDED_TERMS_TWO`
+
+Same as above. You might need this extra one to filter for say, a make and model at the same time.
 
 `MAX_PRICE`
 `MIN_PRICE`
@@ -86,12 +80,12 @@ The maximum and minimum prices to filter by (duh).
 `MAX_MILEAGE`
 `MIN_MILEAGE`
 
-The minimum and maximum mileage to filter by (also duh).
+The minimum and maximum mileage to filter by. Only applicable to cars.
 
 `MIN_YEAR`
 `MAX_YEAR`
 
-The minimum and maximum year to filter by (double duh).
+The minimum and maximum year to filter by. Only applicable to cars
 
 ---
 
