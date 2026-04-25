@@ -217,9 +217,9 @@ def run_scraper():
             if i % 2 == 0:
                 listings = page.locator('a[href*="/marketplace/item/"]').all()
                 parse_data(listings)
-                if listings[-1] = last_listing:
+                if listings[-1] == last_listing:
                     last_listing_same += 1
-                    if last_listing_same = 3:
+                    if last_listing_same == 3:
                         print("reached the end of the results, exiting...")
                         sys.exit(0)
                 last_listing = listings[-1]
