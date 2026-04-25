@@ -191,6 +191,10 @@ def run_scraper():
         listings = page.locator('a[href*="/marketplace/item/"]').all()
         parse_data(listings)
 
+        # if the last listing is the same 3 times in a row, we've reached the end of the results.
+        last_listing_same = 0
+        last_listing = ""
+
         for i in range(SCROLLS):
             total_scroll = random.randint(2000, 5000)
             scrolled = 0
@@ -213,6 +217,12 @@ def run_scraper():
             if i % 2 == 0:
                 listings = page.locator('a[href*="/marketplace/item/"]').all()
                 parse_data(listings)
+                if listings[-1] = last_listing:
+                    last_listing_same += 1
+                    if last_listing_same = 3:
+                        print("reached the end of the results, exiting...")
+                        sys.exit(0)
+                last_listing = listings[-1]
 
             pbar.update(1)
 
