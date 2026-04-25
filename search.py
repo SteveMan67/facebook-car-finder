@@ -3,9 +3,51 @@ from secrets import *
 import smtplib
 from email.message import EmailMessage
 import json
+import argparse
+
 
 with open("settings.json", "r") as file:
     globals().update(json.load(file))
+
+parser = argparse.ArgumentParser(
+        description="These settings and more can be found in settings.json. Also check out README.md!"
+        )
+
+parser.add_argument("--max-price", type=int, help="Maximum price")
+parser.add_argument("--min-price", type=int, help="Minimum price")
+parser.add_argument("--max-mileage", type=int, help="Maximum mileage (cars only)")
+parser.add_argument("--min-mileage", type=int, help="Minimum mileage (cars only)")
+parser.add_argument("--max-year", type=int, help="Maximum year (cars only)")
+parser.add_argument("--min-year", type=int, help="Minimum year (cars only)")
+parser.add_argument("--purge-viewed-db", action="store_true", help="Wipe the database of cars you've seen")
+parser.add_argument("--send-notifications", action="store_true", help="Send_notifications")
+parser.add_argument("--no-pause", action="store_true", help="Don't pause at the end")
+
+args = parser.parse_args()
+
+if args.max_price:
+    MAX_PRICE = args.max_price
+
+if args.min_price:
+    MIN_PRICE = args.min_price
+
+if args.max_mileage: 
+    MAX_MILEAGE = args.max_mileage
+
+if args.min_mileage:
+    MIN_MILEAGE = args.min_mileage
+
+if args.max_year:
+    MAX_YEAR = args.max_year
+
+if args.min_year:
+    MIN_YEAR = args.min_year
+
+if args.purge_viewed_db:
+    PURGE_VIEWED_DB = True
+
+if args.send_notifications:
+    SEND_NOTIFICATIONS = True
 
 conn = sqlite3.connect("listings.db")
 cursor = conn.cursor()
@@ -101,7 +143,10 @@ def get_data_from_row(row):
     return out
 
 for row in rows:
-    data = get_data_from_row(row)
+    try:
+        data = get_data_from_row(row)
+    except:
+        continue
     filtered_make = False
 
     has_excluded_term = False
@@ -167,4 +212,5 @@ if len(new_listings) > 0 and SEND_NOTIFICATIONS:
 print("")
 print(f"found {listing_count} total, {len(new_listings)} new listings matching search parameters")
 
-input()
+if not args.no_pause:
+    input()

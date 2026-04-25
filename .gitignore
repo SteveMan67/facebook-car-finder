@@ -4,3 +4,6 @@ secrets.py
 run_cars.bat
 settings.json
 cars.db
+listings.db
+cars.db
+IMPLEMENTATION.md

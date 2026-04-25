@@ -1,10 +1,12 @@
 import sqlite3
+from typing import runtime_checkable
 from playwright.sync_api import sync_playwright
 from datetime import datetime
 import random
 import json
 import sys
-
+import argparse
+from tqdm import tqdm
 
 
 # so emojis don't break the script
@@ -12,6 +14,36 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 with open("settings.json", "r") as file:
     globals().update(json.load(file))
+
+parser = argparse.ArgumentParser(
+        description="These settings and more can be found in settings.json. Also check out README.md!"
+                                 )
+
+parser.add_argument("--purge-db", action="store_true", help="wipe the database of all listings")
+parser.add_argument("--url", help="the facebook url to scrape")
+parser.add_argument("--headless", action="store_true", help="run the browser without a window")
+parser.add_argument("--windowed", action="store_true", help="run the browser in a window, like normal")
+parser.add_argument("--scrolls", type=int, help="how many times the scraper should scroll down")
+
+args = parser.parse_args()
+
+if args.purge_db:
+    PURGE_DB_ON_START = True
+
+if args.url:
+    FACEBOOK_URL = args.url
+
+if args.headless and args.windowed:
+    print("You can't run both headless and windowed at the same time lol")
+    sys.exit(0)
+if args.headless:
+    RUN_HEADLESS = True
+elif args.windowed:
+    RUN_HEADLESS = False
+
+
+if args.scrolls:
+    SCROLLS = args.scrolls
 
 category = "Unkown"
 
@@ -23,9 +55,11 @@ cursor = conn.cursor()
 
 def init_db(): 
 
-    cursor.execute('''
-        DROP TABLE IF EXISTS cars;
-                    ''')
+    if PURGE_DB_ON_START:
+        cursor.execute('''
+        DROP TABLE IF EXISTS listings
+
+                       ''')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS listings (
@@ -87,7 +121,7 @@ def parse_data(listings):
             title = raw_text[1 + shift]
             location = raw_text[2 + shift]
 
-            print(f"{title} | ${price} | {clean_url} ")
+            tqdm.write(f"{title} | ${price} | {clean_url} ")
 
             add_listing(title, price, clean_url, location, raw_text)
 
@@ -151,6 +185,8 @@ def run_scraper():
             "mobile": False,
             })
 
+        pbar = tqdm(total=SCROLLS, desc="Scraping")
+
         # grab the first listings we see
         listings = page.locator('a[href*="/marketplace/item/"]').all()
         parse_data(listings)
@@ -177,7 +213,8 @@ def run_scraper():
             if i % 2 == 0:
                 listings = page.locator('a[href*="/marketplace/item/"]').all()
                 parse_data(listings)
-            print(f"--- PROGRESS: {i}/{SCROLLS} ---")
+
+            pbar.update(1)
 
         page.wait_for_timeout(2000)
 
@@ -185,8 +222,9 @@ def run_scraper():
         listings = page.locator('a[href*="/marketplace/item/"]').all()
 
         parse_data(listings)
+        pbar.close
 
-        print("finished, exiting")
+        tqdm.write("finished, exiting")
         browser_context.close()
 
 
