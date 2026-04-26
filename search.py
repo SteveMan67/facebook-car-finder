@@ -4,6 +4,11 @@ import smtplib
 from email.message import EmailMessage
 import json
 import argparse
+import eel
+
+@eel.expose
+def set_var(name, value):
+    globals()[name] = value
 
 
 with open("settings.json", "r") as file:
@@ -84,7 +89,6 @@ conn.commit()
 
 rows = cursor.fetchall()
 
-listing_count = 0
 
 new_listings = []
 
@@ -142,75 +146,86 @@ def get_data_from_row(row):
         out["mileage"] = int(mileage)
     return out
 
-for row in rows:
-    try:
-        data = get_data_from_row(row)
-    except:
-        continue
-    filtered_make = False
 
-    has_excluded_term = False
-
-    for term in EXCLUDED_TERMS:
-        has_excluded_term = True if term.lower() in data["title"].lower() or has_excluded_term else False
-
-    has_included_terms = False
-
-    if INCLUDED_TERMS == []:
-        has_included_terms = True
-    else:
-        for term in INCLUDED_TERMS:
-            has_included_terms = True if term.lower() in data["title"].lower() or has_included_terms else False
-
-    has_second_included_term = False
-
-    if INCLUDED_TERMS_TWO == []:
-        has_second_included_term = True
-    else:
-        for term in INCLUDED_TERMS_TWO:
-            has_second_included_term = True if term.lower() in data["title"].lower() or has_second_included_term else False
-
-    passes_category = True
-
-    if data["category"] == "Vehicle":
-        passes_category = False
-
-        correct_mileage = data["mileage"] >= MIN_MILEAGE and data["mileage"] <= MAX_MILEAGE
-
-        year = int(data["title"].split(" ")[0])
-        correct_year = year >= MIN_YEAR and year <= MAX_YEAR
-
-        passes_category = correct_mileage and correct_year
-
-
-
-    if not has_excluded_term and has_included_terms and has_second_included_term and passes_category:
-        print("--------------------------------------")
+@eel.expose
+def search():
+    out = []
+    listing_count = 0
+    for row in rows:
         try:
-            cursor.execute('''
-                        INSERT INTO viewed (url, title, price, location)
-                        VALUES (?, ?, ?, ?)
-                           ''', (data["url"], data["title"], data["price"], data["location"]))
-
-            conn.commit()
-            new_listings.append(data)
-            print("!!! NEW !!!")
+            data = get_data_from_row(row)
         except:
-            pass
-        listing_count += 1
-        print(row[0])
-        print(f'${data["price"]}')
-        print(f'Location: {data["location"]}')
-        print(f'url: {data["url"]}')
-        
+            continue
+        filtered_make = False
+
+        has_excluded_term = False
+
+        for term in EXCLUDED_TERMS:
+            has_excluded_term = True if term.lower() in data["title"].lower() or has_excluded_term else False
+
+        has_included_terms = False
+
+        if INCLUDED_TERMS == []:
+            has_included_terms = True
+        else:
+            for term in INCLUDED_TERMS:
+                has_included_terms = True if term.lower() in data["title"].lower() or has_included_terms else False
+
+        has_second_included_term = False
+
+        if INCLUDED_TERMS_TWO == []:
+            has_second_included_term = True
+        else:
+            for term in INCLUDED_TERMS_TWO:
+                has_second_included_term = True if term.lower() in data["title"].lower() or has_second_included_term else False
+
+        passes_category = True
+
         if data["category"] == "Vehicle":
-            print(f'Mileage: {data["mileage"]}mi')
+            passes_category = False
 
-if len(new_listings) > 0 and SEND_NOTIFICATIONS:
-    send_notification("New Listings Found", new_listings)
+            correct_mileage = data["mileage"] >= MIN_MILEAGE and data["mileage"] <= MAX_MILEAGE
 
-print("")
-print(f"found {listing_count} total, {len(new_listings)} new listings matching search parameters")
+            year = int(data["title"].split(" ")[0])
+            correct_year = year >= MIN_YEAR and year <= MAX_YEAR
 
-if not args.no_pause:
-    input()
+            passes_category = correct_mileage and correct_year
+
+
+
+        if not has_excluded_term and has_included_terms and has_second_included_term and passes_category:
+            print("--------------------------------------")
+            try:
+                cursor.execute('''
+                            INSERT INTO viewed (url, title, price, location)
+                            VALUES (?, ?, ?, ?)
+                            ''', (data["url"], data["title"], data["price"], data["location"]))
+
+                conn.commit()
+                new_listings.append(data)
+                print("!!! NEW !!!")
+            except:
+                pass
+            listing_count += 1
+            print(row[0])
+            print(f'${data["price"]}')
+            print(f'Location: {data["location"]}')
+            print(f'url: {data["url"]}')
+            
+            if data["category"] == "Vehicle":
+                print(f'Mileage: {data["mileage"]}mi')
+
+            out.append(data)
+    return out
+
+if __name__ == "__main__":
+    listing_count = 0
+    search()
+    if len(new_listings) > 0 and SEND_NOTIFICATIONS:
+        send_notification("New Listings Found", new_listings)
+
+    print("")
+    print(f"found {listing_count} total, {len(new_listings)} new listings matching search parameters")
+
+    if not args.no_pause:
+        input()

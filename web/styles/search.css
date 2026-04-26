@@ -1,0 +1,135 @@
+.body {
+  overflow: hidden;
+  scrollbar-width: none;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-template-areas: "filters listings";
+}
+
+/* filtersss */
+
+.filters {
+  grid-area: filters;
+  padding: 10px 10px 10px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15px;
+}
+
+.filters img {
+  width: 20px;
+  aspect-ratio: 1;
+}
+
+.filters div {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filters input,
+.filters select {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 18px;
+}
+
+.filters option {
+  color: black;
+}
+
+.filters .label {
+  text-align: center;
+  margin: 5px;
+  font-weight: bold;
+}
+
+.min-max {
+  gap: 10px;
+}
+
+.min-max > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.min-max .input {
+  border: 1px solid white;
+  border-radius: 8px;
+  width: 140px;
+}
+
+.min-max p {
+  margin: 5px;
+}
+
+.searchbar {
+  border: 1px solid white;
+  border-radius: 10px;
+  padding: 5px 10px;
+}
+
+.category {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.category select {
+  border: 1px solid white;
+  border-radius: 8px;
+  height: 40px;
+  padding: 5px 15px;
+}
+
+div.make,
+div.model {
+  flex-direction: column;
+  position: relative;
+}
+
+.make input,
+.model input {
+  border: 1px solid white;
+  border-radius: 8px;
+  width: 100%;
+  padding: 5px 15px;
+}
+
+.dropdown {
+  position: absolute;
+  width: 100%;
+  border: 1px solid white;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: #090a16;
+  top: 100%;
+  left: 0;
+  display: none;
+  z-index: 1;
+}
+
+.dropdown li {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.dropdown li:hover,
+.dropdown li.highlight {
+  background-color: #172031;
+}
+
+/* listings */
+
+.listings {
+  grid-area: listings;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}

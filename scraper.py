@@ -61,6 +61,7 @@ def init_db():
 
                        ''')
 
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS listings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,21 +71,22 @@ def init_db():
             category TEXT NOT NULL,
             metadata TEXT,
             location TEXT,
-            scraped_date TEXT
+            scraped_date TEXT,
+            image_url TEXT
         )
     ''')
     conn.commit()
     print("database ready")
 
-def add_listing(title, price, url, location, metadata):
+def add_listing(title, price, url, location, metadata, img_url):
     metadata = json.dumps(metadata)
     try:
         # insert it into the db
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cursor.execute('''
-            INSERT INTO listings (title, price, url, location, metadata, scraped_date, category)
-            VALUES (?, ?, ?, ?, ?, ?,  ?)
-                       ''', (title, price, url, location, metadata, now, category))
+            INSERT INTO listings (title, price, url, location, metadata, scraped_date, category, image_url)
+            VALUES (?, ?, ?, ?, ?, ?,  ?, ?)
+                       ''', (title, price, url, location, metadata, now, category, img_url))
         conn.commit()
     except sqlite3.IntegrityError:
         # update the current listing in the db
@@ -92,8 +94,8 @@ def add_listing(title, price, url, location, metadata):
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             cursor.execute('''
-                UPDATE listings set title = ?, price = ?, location = ?, metadata = ?, scraped_date = ?, category = ? WHERE url = ?
-                        ''', (title, price, location, metadata, now, url, category))
+                UPDATE listings set title = ?, price = ?, location = ?, metadata = ?, scraped_date = ?, category = ?, image_url = ? WHERE url = ?
+                        ''', (title, price, location, metadata, now, url, category, img_url))
             conn.commit()
         except: 
             print(f"Could not add {title}")
@@ -103,6 +105,7 @@ def parse_data(listings):
     for item in listings:
         try:
             href = item.get_attribute("href", timeout=1000)
+            img_url = item.locator("img").get_attribute("src", timeout=1000)
             clean_url = "https://facebook.com" + href.split("?")[0]
 
             raw_text = item.inner_text().split("\n")
@@ -123,7 +126,7 @@ def parse_data(listings):
 
             tqdm.write(f"{title} | ${price} | {clean_url} ")
 
-            add_listing(title, price, clean_url, location, raw_text)
+            add_listing(title, price, clean_url, location, raw_text, img_url)
 
         except Exception as e:
             print(f"Parse error for listing -> {e}")
