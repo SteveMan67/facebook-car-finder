@@ -6,13 +6,17 @@ import json
 import argparse
 import eel
 
+with open("settings.json", "r") as file:
+    globals().update(json.load(file))
+
 @eel.expose
 def set_var(name, value):
     globals()[name] = value
 
+@eel.expose
+def get_var(name):
+    return globals()[name]
 
-with open("settings.json", "r") as file:
-    globals().update(json.load(file))
 
 parser = argparse.ArgumentParser(
         description="These settings and more can be found in settings.json. Also check out README.md!"
@@ -81,7 +85,7 @@ cursor.execute('''
                 )
                ''')
 
-cursor.execute('''SELECT title, price, url, location, category, metadata
+cursor.execute('''SELECT title, price, url, location, category, metadata, image_url
                FROM listings 
                WHERE price <= ? AND price >= ?''', 
                (MAX_PRICE, MIN_PRICE))
@@ -128,6 +132,7 @@ def get_data_from_row(row):
     out["location"] = row[3]
     out["category"] = row[4]
     out["metadata"] = json.loads(row[5])
+    out["image_url"] = row[6]
 
     if out["category"] == "Vehicle":
         metadata = out["metadata"]
@@ -211,6 +216,7 @@ def search():
             print(f'${data["price"]}')
             print(f'Location: {data["location"]}')
             print(f'url: {data["url"]}')
+            print(data["image_url"])
             
             if data["category"] == "Vehicle":
                 print(f'Mileage: {data["mileage"]}mi')
