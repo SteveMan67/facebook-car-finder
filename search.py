@@ -60,9 +60,9 @@ if args.send_notifications:
 
 conn = sqlite3.connect("listings.db")
 cursor = conn.cursor()
+conn.execute('PRAGMA journal_mode=WAL;')
 
 cursor.execute('''SELECT title from listings where 1 = 1''')
-
 conn.commit()
 
 rows = cursor.fetchall()
@@ -92,6 +92,7 @@ cursor.execute('''SELECT title, price, url, location, category, metadata, image_
 conn.commit()
 
 rows = cursor.fetchall()
+conn.close()
 
 
 new_listings = []
@@ -151,6 +152,20 @@ def get_data_from_row(row):
         out["mileage"] = int(mileage)
     return out
 
+@eel.expose
+def search_text(search_term):
+    formatted = f"%{search_term}%"
+    conn = sqlite3.connect("listings.db")
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT title, price, url, location, category, metadata, image_url
+               FROM listings 
+               WHERE price <= ? AND price >= ? AND title LIKE ?''',
+                   (MAX_PRICE, MIN_PRICE, formatted))
+    global rows
+    rows = cursor.fetchall()
+    conn.close()
+    return search()
 
 @eel.expose
 def search():
@@ -161,7 +176,6 @@ def search():
             data = get_data_from_row(row)
         except:
             continue
-        filtered_make = False
 
         has_excluded_term = False
 

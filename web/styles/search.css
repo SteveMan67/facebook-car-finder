@@ -1,11 +1,20 @@
 .body {
   overflow: hidden;
   scrollbar-width: none;
+  height: 100vh;
 }
 .grid {
   display: grid;
   grid-template-columns: 1fr 3fr;
-  grid-template-areas: "filters listings";
+  grid-template-rows: 80px 1fr;
+  height: 100%;
+  grid-template-areas:
+    "nav nav"
+    "filters listings";
+}
+
+.grid nav {
+  grid-area: nav;
 }
 
 /* filtersss */
@@ -23,6 +32,7 @@
 .filters img {
   width: 25px;
   aspect-ratio: 1;
+  margin-left: 5px;
 }
 
 .filters div {
@@ -50,7 +60,7 @@
   margin: 5px;
   font-weight: bold;
   margin: 0;
-  margin-top: 10px;
+  font-size: 20px;
 }
 
 .min-max {
@@ -71,6 +81,7 @@
 
 .min-max p {
   margin: 5px;
+  margin-top: 0;
 }
 
 .searchbar {
@@ -84,6 +95,11 @@
   justify-content: space-between;
 }
 
+.category p {
+  font-size: 20px;
+  margin: 0;
+}
+
 .category select {
   border: 1px solid white;
   border-radius: 8px;
@@ -95,14 +111,44 @@ div.make,
 div.model {
   flex-direction: column;
   position: relative;
+  border: 1px solid white;
+  border-radius: 10px;
+}
+
+.top-section p {
+  margin: 2px 0 2px 10px;
 }
 
 .make input,
 .model input {
-  border: 1px solid white;
   border-radius: 8px;
   width: 100%;
   padding: 5px 15px;
+}
+
+.model .pills,
+.make .pills {
+  padding: 10px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pills p {
+  border: 1px solid white;
+  border-radius: 10px;
+  padding: 5px 10px;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.pills img {
+  width: 20px;
+  height: 20px;
 }
 
 input::-webkit-outer-spin-button,
@@ -115,6 +161,10 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   appearance: textfield;
   -moz-appearance: textfield;
+}
+
+.top-section {
+  position: relative;
 }
 
 .dropdown {
@@ -163,10 +213,13 @@ input[type="number"] {
   border-radius: 20px;
   padding: 15px;
   width: 310px;
+  height: 470px;
 }
 
 .listing > img {
   border-radius: 10px;
+  width: 100%;
+  aspect-ratio: 1;
 }
 
 .listing img:not(.listing > img) {

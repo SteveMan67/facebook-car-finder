@@ -7,6 +7,16 @@ import json
 import sys
 import argparse
 from tqdm import tqdm
+import eel
+
+@eel.expose
+def set_scraper_var(name, value):
+    globals()[name] = value
+
+@eel.expose
+def get_scraper_var(name):
+    return globals()[name]
+
 
 
 # so emojis don't break the script
@@ -51,6 +61,8 @@ if "vehicles" in FACEBOOK_URL.lower():
     category = "Vehicle"
 
 conn = sqlite3.connect("listings.db")
+conn.execute('PRAGMA journal_mode=WAL;')
+
 cursor = conn.cursor()
 
 def init_db(): 
@@ -77,6 +89,7 @@ def init_db():
     ''')
     conn.commit()
     print("database ready")
+    eel.log("database ready")
 
 def add_listing(title, price, url, location, metadata, img_url):
     metadata = json.dumps(metadata)
@@ -90,7 +103,6 @@ def add_listing(title, price, url, location, metadata, img_url):
         conn.commit()
     except sqlite3.IntegrityError:
         # update the current listing in the db
-        tqdm.write(img_url)
         try:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -102,8 +114,11 @@ def add_listing(title, price, url, location, metadata, img_url):
             print(f"Could not add {title}")
             pass
 
+
 def parse_data(listings):
+    listings_found = 0
     for item in listings:
+        listings_found += 1
         try:
             href = item.get_attribute("href", timeout=1000)
             img_url = item.locator("img").get_attribute("src", timeout=1000)
@@ -126,14 +141,22 @@ def parse_data(listings):
             location = raw_text[2 + shift]
 
             tqdm.write(f"{title} | ${price} | {clean_url} ")
+            eel.log(f"{title} | ${price} | {clean_url} ")
 
             add_listing(title, price, clean_url, location, raw_text, img_url)
 
+
         except Exception as e:
             print(f"Parse error for listing -> {e}")
+            eel.log(f"Parse error for listing -> {e}")
+            
+    return listings_found
 
 
+@eel.expose
 def run_scraper():
+    listings_found = 0
+
     with sync_playwright() as p:
 
         # browser context only opens sometimes, try 15 times to open it
@@ -163,11 +186,13 @@ def run_scraper():
                 tries += 1
 
         print("context launched!")
+        eel.log("context launched!")
 
         page = browser_context.new_page()
 
 
         print("visiting marketplace")
+        eel.log("visiting marketplace")
         page.goto(FACEBOOK_URL)
         try: 
             page.wait_for_selector('a[href*="/marketplace/item"]')
@@ -193,12 +218,14 @@ def run_scraper():
 
         # grab the first listings we see
         listings = page.locator('a[href*="/marketplace/item/"]').all()
-        parse_data(listings)
+        listings_found += parse_data(listings)
 
         # if the last listing is the same 3 times in a row, we've reached the end of the results.
         last_listing_same = 0
         last_listing = ""
 
+        tqdm.write(f"scrolls: {SCROLLS}")
+        eel.log(f"scrolls: {SCROLLS}")
         for i in range(SCROLLS):
             total_scroll = random.randint(2000, 5000)
             scrolled = 0
@@ -220,25 +247,34 @@ def run_scraper():
             # grab listings every two scrolls to make sure we don't miss any if they get deleted
             if i % 2 == 0:
                 listings = page.locator('a[href*="/marketplace/item/"]').all()
-                parse_data(listings)
+                listings_found += parse_data(listings)
                 if listings[-1] == last_listing:
                     last_listing_same += 1
                     if last_listing_same == 3:
                         print("reached the end of the results, exiting...")
-                        sys.exit(0)
                 last_listing = listings[-1]
 
             pbar.update(1)
 
-        page.wait_for_timeout(2000)
+            stats = pbar.format_dict
 
+            remaining = (stats['total'] - stats['n']) / stats['rate'] if stats['rate'] else 0
+            eta_string = pbar.format_interval(remaining)
+            try:
+                eel.update_progress(i + 1, eta_string, listings_found)
+            except:
+                pass
+
+        page.wait_for_timeout(2000)
 
         listings = page.locator('a[href*="/marketplace/item/"]').all()
 
-        parse_data(listings)
-        pbar.close
+        listings_found += parse_data(listings)
+        pbar.close()
 
         tqdm.write("finished, exiting")
+        eel.log("finished, exiting")
+        eel.finished()
         browser_context.close()
 
 

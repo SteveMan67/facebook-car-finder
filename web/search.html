@@ -1,11 +1,12 @@
+<!doctype html>
 <html lang="en">
   <head>
     <script type="text/javascript" src="/eel.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Search</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <linkrel ="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
       rel="stylesheet"
@@ -14,15 +15,15 @@
     <link rel="stylesheet" href="/styles/search.css" />
   </head>
   <body>
-    <nav>
-      <div class="title">Facebook Marketplace Scraper</div>
-      <div class="links">
-        <a href="/search.html">Search</a>
-        <a href="/scrape.html">Scrape</a>
-        <a href="/settings.html">Settings</a>
-      </div>
-    </nav>
     <div class="grid">
+      <nav>
+        <div class="title">Facebook Marketplace Scraper</div>
+        <div class="links">
+          <a href="/search.html">Search</a>
+          <a href="/scrape.html">Scrape</a>
+          <a href="/settings.html">Settings</a>
+        </div>
+      </nav>
       <div class="filters">
         <div class="searchbar">
           <input
@@ -33,13 +34,13 @@
           />
           <img src="icons/search.svg" alt="search" />
         </div>
-        <div class="category">
-          <p>Category</p>
-          <select name="category" id="cateogry">
-            <option value="Vehicle" selected>Vehicles</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
+        <!-- <div class="category"> -->
+        <!--   <p>Category</p> -->
+        <!--   <select name="category" id="cateogry"> -->
+        <!--     <option value="Vehicle" selected>Vehicles</option> -->
+        <!--     <option value="Other">Other</option> -->
+        <!--   </select> -->
+        <!-- </div> -->
         <p class="label">Price</p>
         <div class="min-max">
           <div class="min">
@@ -92,39 +93,23 @@
           </div>
         </div>
         <div class="make">
-          <p>Make</p>
-          <input type="text" placeholder="" />
-          <ul class="make-list dropdown"></ul>
+          <div class="top-section">
+            <p>Make</p>
+            <input type="text" placeholder="" />
+            <ul class="make-list dropdown"></ul>
+          </div>
+          <div class="pills"></div>
         </div>
         <div class="model">
-          <p>Model</p>
-          <input type="text" disabled />
-          <ul class="model-list dropdown"></ul>
+          <div class="top-section">
+            <p>Model</p>
+            <input type="text" />
+            <ul class="model-list dropdown"></ul>
+          </div>
+          <div class="pills"></div>
         </div>
       </div>
-      <div class="listings">
-        <div class="listing">
-          <img
-            src="https://scontent-hou1-1.xx.fbcdn.net/v/t39.30808-6/663293739_884918577929027_2940548549259492241_n.jpg?stp=c373.0.960.960a_dst-jpg_s261x260_tt6&_nc_cat=107&ccb=1-7&_nc_sid=4f26a2&_nc_ohc=-ixGCSD4K58Q7kNvwGUjXcA&_nc_oc=AdpcyPKWXhUW_l3KsvnzLB-DdLOUKiW6ib0maJ3-YCecWJoJWNPqrQ_v4nRi2-xSbSs&_nc_zt=23&_nc_ht=scontent-hou1-1.xx&_nc_gid=OfBrIom4yb-9LSw4DsrUGQ&_nc_ss=7b2a8&oh=00_Af1gRIryesTmC_NzmHwD-LXN7PnIapjFsLcBAj6Qa1Rwrw&oe=69F4551C"
-            alt=""
-          />
-          <p class="listing-title">2015 Honda civic Si Sedan 4D</p>
-          <div class="price-mileage">
-            <div class="price">
-              <img src="icons/money.svg" alt="" />
-              <p>12,500</p>
-            </div>
-            <div class="mileage">
-              <img src="icons/mileage.svg" alt="" />
-              <p>130,000</p>
-            </div>
-          </div>
-          <div class="location">
-            <img src="icons/location.svg" alt="" />
-            <p>Tulsa, OK</p>
-          </div>
-        </div>
-      </div>
+      <div class="listings"></div>
     </div>
     <script src="js/car-brands.js"></script>
     <script src="js/search.js" defer></script>
