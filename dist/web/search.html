@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script type="text/javascript" src="/eel.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=, initial-scale=1.0" />
+    <title>Search</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/search.css" />
+  </head>
+  <body>
+    <div class="grid">
+      <nav>
+        <div class="title">Facebook Marketplace Scraper</div>
+        <div class="links">
+          <a href="/search.html">Search</a>
+          <a href="/scrape.html">Scrape</a>
+          <a href="/settings.html">Settings</a>
+        </div>
+      </nav>
+      <div class="filters">
+        <div class="searchbar">
+          <input
+            type="text"
+            name="search"
+            id="search"
+            placeholder="search..."
+          />
+          <img src="icons/search.svg" alt="search" />
+        </div>
+        <div class="category">
+          <p>Category</p>
+          <select name="category" id="category"></select>
+        </div>
+        <p class="label">Price</p>
+        <div class="min-max">
+          <div class="min">
+            <p>Min</p>
+            <div class="input">
+              <img src="icons/money.svg" alt="" />
+              <input type="number" name="min-price" id="min-price" />
+            </div>
+          </div>
+          <div class="max">
+            <p>Max</p>
+            <div class="input">
+              <img src="icons/money.svg" alt="" />
+              <input type="number" name="max-price" id="max-price" />
+            </div>
+          </div>
+        </div>
+        <p class="label">Mileage</p>
+        <div class="min-max">
+          <div class="min">
+            <p>Min</p>
+            <div class="input">
+              <img src="icons/mileage.svg" alt="" />
+              <input type="number" name="min-mileage" id="min-mileage" />
+            </div>
+          </div>
+          <div class="max">
+            <p>Max</p>
+            <div class="input">
+              <img src="icons/mileage.svg" alt="" />
+              <input type="number" name="max-mileage" id="max-mileage" />
+            </div>
+          </div>
+        </div>
+        <p class="label">Year</p>
+        <div class="min-max">
+          <div class="min">
+            <p>Min</p>
+            <div class="input">
+              <img src="icons/calendar.svg" alt="" />
+              <input type="number" name="min-year" id="min-year" />
+            </div>
+          </div>
+          <div class="max">
+            <p>Max</p>
+            <div class="input">
+              <img src="icons/calendar.svg" alt="" />
+              <input type="number" name="max-year" id="max-year" />
+            </div>
+          </div>
+        </div>
+        <div class="make">
+          <div class="top-section">
+            <p>Make</p>
+            <input type="text" placeholder="" />
+            <ul class="make-list dropdown"></ul>
+          </div>
+          <div class="pills"></div>
+        </div>
+        <div class="model">
+          <div class="top-section">
+            <p>Model</p>
+            <input type="text" />
+            <ul class="model-list dropdown"></ul>
+          </div>
+          <div class="pills"></div>
+        </div>
+      </div>
+      <div class="listings"></div>
+    </div>
+    <script src="js/car-brands.js"></script>
+    <script src="js/search.js" defer></script>
+  </body>
+</html>

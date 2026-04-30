@@ -1,0 +1,45 @@
+body {
+  height: calc(100vh - 30px);
+  background-color: #090a16;
+  margin: 15px;
+}
+
+* {
+  font-family: "JetBrains Mono", monospace;
+  box-sizing: border-box;
+  color: white;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* nav */
+
+nav {
+  height: 80px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  border: 1px solid white;
+  padding: 15px 25px;
+  border-radius: 20px;
+  font-size: 25px;
+}
+
+.links {
+  display: flex;
+  padding: 15px 25px;
+  flex-direction: row;
+  justify-content: space-between;
+  border: 1px solid white;
+  border-radius: 20px;
+}
+
+.links a {
+  margin: 7px;
+}

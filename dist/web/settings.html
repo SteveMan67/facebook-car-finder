@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script type="text/javascript" src="/eel.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=, initial-scale=1.0" />
+    <title>Settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/settings.css" />
+  </head>
+  <body>
+    <div class="grid">
+      <nav>
+        <div class="title">Facebook Marketplace Scraper</div>
+        <div class="links">
+          <a href="/search.html">Search</a>
+          <a href="/scrape.html">Scrape</a>
+          <a href="/settings.html">Settings</a>
+        </div>
+      </nav>
+      <div class="settings-wrapper">
+        <h2>Settings</h3>
+        <h3>Scraper</h3>
+        
+        <div class="facebook-url-title">
+          <p>Facebook Url</p>
+          <a class="open-marketplace" href="https://www.facebook.com/marketplace" target="_blank">
+            <p>Open Marketplace</p>
+            <img src="icons/new-tab.svg" alt="">
+          </a>
+        </div>
+        <input
+          type="text"
+          class="facebook-url-input"
+          id="facebook-url"
+          placeholder="https://www.facebook.com/marketplace"
+        />
+        <div class="scrolls">
+          <p>Scrolls</p>
+          <input type="number" name="scrolls" id="scrolls">
+        </div>
+        <div class="sign-in" id="sign-in">
+          <p>Sign into Facebook</p>
+          <img src="icons/new-tab.svg" alt="">
+        </div>
+        
+        <h3>Email</h3>
+        <div class="send-notifications">
+          <p>Send notifications</p>
+          <input class="toggle" type="checkbox" id="send-notifications">
+        </div>
+        <div class="google-app-password">
+          <p>Google app password</p>
+          <input type="text" id="google-app-password" placeholder="abcd efgh ijkl mnop">
+        </div>
+        <div class="sender-address">
+          <p>Sender address</p>
+          <input type="text" id="sender-address" placeholder="youremail@gmail.com">
+        </div>
+        <div class="reciever-addresses">
+          <div class="top-addresses">
+            <p>Reciever Addresses</p>
+            <input type="text" id="reciever-address" placeholder="otheremail@email.com">
+          </div>
+          <div class="pills">
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/settings.js"></script>
+  </body>
+</html>

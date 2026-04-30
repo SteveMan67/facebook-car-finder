@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script type="text/javascript" src="/eel.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=, initial-scale=1.0" />
+    <title>Scrape</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+    />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/scrape.css" />
+  </head>
+  <body>
+    <div class="grid">
+      <nav>
+        <div class="title">Facebook Marketplace Scraper</div>
+        <div class="links">
+          <a href="/search.html">Search</a>
+          <a href="/scrape.html">Scrape</a>
+          <a href="/settings.html">Settings</a>
+        </div>
+      </nav>
+      <div class="scrape-options">
+        <h3 class="section-title">Scrape</h3>
+        <div class="facebook-url-title">
+          <p>Facebook Url</p>
+          <a href="https://www.facebook.com/marketplace" target="_blank"
+            >Open Marketplace</a
+          >
+        </div>
+        <input
+          type="text"
+          class="facebook-url-input"
+          id="facebook-url"
+          placeholder="https://www.facebook.com/marketplace"
+        />
+        <div class="category">
+          <p>Category</p>
+          <div class="category-input">
+            <input type="text" id="category-input" />
+            <div class="dropdown"></div>
+          </div>
+        </div>
+        <div class="scrolls">
+          <p>Scrolls</p>
+          <input type="number" id="scrolls-input" />
+        </div>
+        <h3 id="start-scraper">Start</h3>
+      </div>
+      <div class="scraping hidden">
+        <h3>Scraping...</h3>
+        <div class="scroll-info">
+          <p class="scrolls">
+            Scrolls:
+            <span id="scrolls-current">0</span>
+            /
+            <span id="scrolls-total">100</span>
+          </p>
+          <p class="time-remaining">
+            <span id="time-remaining">--:--</span>
+            Remaining
+          </p>
+        </div>
+        <div class="progress-bar"></div>
+        <div class="other-info">
+          <p class="listings-found">
+            Listings found: <span id="listings-found">0</span>
+          </p>
+          <p class="listings-per-scroll">
+            New listings per scroll: <span id="listings-per-scroll">0</span>
+          </p>
+          <p>Command Output</p>
+        </div>
+        <pre class="output"></pre>
+      </div>
+    </div>
+    <script src="js/scrape.js"></script>
+  </body>
+</html>

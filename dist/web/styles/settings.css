@@ -1,0 +1,175 @@
+.grid {
+  display: grid;
+  grid-template-rows: 80px 1fr;
+  grid-template-areas:
+    "nav"
+    "settings";
+}
+
+.settings-wrapper {
+  margin: 0 auto;
+  grid-area: settings;
+  max-width: 800px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings-wrapper div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+input {
+  border: 1px solid white;
+  border-radius: 15px;
+  outline: none;
+  background-color: transparent;
+  padding: 2px 10px;
+  font-size: 18px;
+}
+
+.facebook-url-input {
+  width: 100%;
+}
+
+p {
+  margin: 5px 0;
+}
+
+.open-marketplace {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  gap: 10px;
+}
+
+.open-marketplace img {
+  width: 25px;
+  aspect-ratio: 1;
+}
+
+#sender-address,
+#google-app-password {
+  width: 400px;
+}
+
+#reciever-address {
+  border: none;
+  outline: none;
+  width: 385px;
+}
+
+div.reciever-addresses {
+  border: 1px solid white;
+  border-radius: 15px;
+  padding: 2px 15px;
+  flex-direction: column;
+}
+
+div.pills {
+  justify-content: left;
+  padding: 5px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+div.pill {
+  justify-content: left;
+  border: 1px solid white;
+  padding: 0 15px;
+  width: unset;
+  border-radius: 15px;
+}
+
+.pill img {
+  width: 25px;
+  aspect-ratio: 1;
+  margin-left: 10px;
+}
+
+#scrolls {
+  appearance: textfield;
+}
+
+div.sign-in {
+  justify-content: center;
+  gap: 10px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.sign-in img {
+  width: 25px;
+  aspect-ratio: 1;
+}
+
+.toggle {
+  appearance: none;
+  box-sizing: border-box;
+  height: 30px;
+  aspect-ratio: 5/3;
+  border-radius: 50px;
+  position: relative;
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 3px;
+  width: 15px;
+  aspect-ratio: 1;
+  background-color: #090a16;
+  border: 3px solid white;
+  border-radius: 50%;
+  transition: transform 150ms ease;
+}
+
+.toggle::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.toggle:checked::before {
+  border: 3px solid #090a16;
+  height: 5px;
+  left: 10px;
+  border-radius: 3px;
+}
+
+.toggle:not(:checked)::before {
+  border: 3px solid white;
+  border-radius: 50%;
+  right: 5px;
+  width: 8px;
+  aspect-ratio: 1;
+  background-color: #090a16;
+}
+
+.toggle:checked {
+  background-color: white;
+  border: 3px solid white;
+}
+
+.toggle:not(:checked) {
+  background-color: #090a16;
+  border: 3px solid white;
+}
+
+.toggle:checked::after {
+  background-color: #090a16;
+  transform: translateX(18px) translateY(-50%);
+}
