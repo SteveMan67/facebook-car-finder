@@ -30,6 +30,7 @@ jobs:
           pyinstaller --onefile setup.py &
           pyinstaller --onefile convert-to-csv.py &
           pyinstaller --onefile --add-data "web:web" main.py &
+          wait
           python -c "import shutil; shutil.copy('settings.example.json','dist/')"
 
       - name: Upload Artifact
