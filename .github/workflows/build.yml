@@ -48,11 +48,7 @@ jobs:
 
       - name: Copy settings file
         shell: bash
-        run: |
-          if [ -f "settings.example.json" ]; then
-          cp settings.example.json dist/
-          else
-        echo "Warning: settings.example.json not found, skipping"
+        run: cp settings.example.json dist/ 2>/dev/null || echo "Warning: settings.example.json not found, skipping"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
