@@ -1,16 +1,15 @@
-name: Build All OSs
 on:
   workflow_dispatch:
-  push:
-    branches: ["main"]
+    push:
+      branches: ["main"]
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-
     steps:
       - uses: actions/checkout@v4
 
@@ -19,25 +18,43 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Install uv & deps
-        run: |
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
-          pip install uv
-          uv pip install --system pyinstaller playwright eel tqdm
+      - name: Install dependencies
+        run: uv pip install --system pyinstaller playwright eel tqdm
+
+      - name: Install Playwright browsers
+        run: |
+          playwright install
+          playwright install-deps
+        if: runner.os == 'Linux'
+
+      - name: Install Playwright browsers (non-Linux)
+        run: playwright install
+        if: runner.os != 'Linux'
 
       - name: Build (parallel)
         shell: bash
         run: |
-          pyinstaller --onefile scraper.py &
-          pyinstaller --onefile search.py &
-          pyinstaller --onefile setup.py &
-          pyinstaller --onefile convert-to-csv.py &
-          pyinstaller --onefile --add-data "web:web" main.py &
+          pyinstaller --onefile --distpath dist --workpath build/scraper scraper.py &
+          pyinstaller --onefile --distpath dist --workpath build/search search.py &
+          pyinstaller --onefile --distpath dist --workpath build/setup setup.py &
+          pyinstaller --onefile --distpath dist --workpath build/convert convert-to-csv.py &
+          pyinstaller --onefile --distpath dist --workpath build/main --add-data "web:web" main.py &
           wait
-          python -c "import shutil; shutil.copy('settings.example.json','dist/')"
+
+      - name: Copy settings file
+        shell: bash
+        run: |
+          if [ -f "settings.example.json" ]; then
+          cp settings.example.json dist/
+          else
+        echo "Warning: settings.example.json not found, skipping"
+        fi
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: executables-${{ matrix.os }}
-          path: dist/*
+          path: dist/*: dist/*
