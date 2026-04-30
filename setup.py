@@ -4,8 +4,9 @@ import shutil
 import json
 from tkinter import filedialog
 from playwright.sync_api import sync_playwright
+import eel
+
 # Provides an easy way to setup the scraper
-print("--- EASY SCRAPER SETUP ---")
 
 template = "settings.example.json"
 filename = "settings.json"
@@ -92,223 +93,242 @@ if os.path.exists(template) and not os.path.exists(filename):
 with open(filename, "r") as f:
     data = json.load(f)
 
-while True:
-    setup_id = input("What would you like to set up? (f)ilters, (s)craper, (e)mail, or (q)uit: ")
+def init_setup():
+    print("--- EASY SCRAPER SETUP ---")
+    while True:
+        setup_id = input("What would you like to set up? (f)ilters, (s)craper, (e)mail, or (q)uit: ")
 
-    if setup_id == "f":
-        # Filter setup
-        print("--- Filter Setup ---")
-        print("-------------------------------")
-        
-        print("What type of thing are you scraping?")
-        print('if it\'s not on the list, then it will default to "Generic"')
-        category = input("(v)ehicles, (n)one: ")
+        if setup_id == "f":
+            # Filter setup
+            print("--- Filter Setup ---")
+            print("-------------------------------")
+            
+            print("What type of thing are you scraping?")
+            print('if it\'s not on the list, then it will default to "Generic"')
+            category = input("(v)ehicles, (n)one: ")
 
-        if category.lower() == "v":
-            print("Vehicle Scraping")
-            print("This is a list of car brands to let through. ")
-            print("It is case insensitive.")
+            if category.lower() == "v":
+                print("Vehicle Scraping")
+                print("This is a list of car brands to let through. ")
+                print("It is case insensitive.")
 
-            makes = []
+                makes = []
 
-            list_item = input("Enter a make or (q) to quit: ")
-
-            while not list_item.lower() == "q":
-                makes.append(list_item)
                 list_item = input("Enter a make or (q) to quit: ")
 
-            data["INCLUDED_TERMS"] = makes
+                while not list_item.lower() == "q":
+                    makes.append(list_item)
+                    list_item = input("Enter a make or (q) to quit: ")
 
-            print("-------------------------------")
-            print("This is a list of car models to let through. ")
-            print("It is case insensitive.")
+                data["INCLUDED_TERMS"] = makes
 
-            models = []
+                print("-------------------------------")
+                print("This is a list of car models to let through. ")
+                print("It is case insensitive.")
 
-            list_item = input("Enter a model or (q) to quit: ")
+                models = []
 
-            while not list_item.lower() == "q":
-                models.append(list_item)
                 list_item = input("Enter a model or (q) to quit: ")
 
-            data["INCLUDED_TERMS_TWO"] = models
+                while not list_item.lower() == "q":
+                    models.append(list_item)
+                    list_item = input("Enter a model or (q) to quit: ")
 
-            print("-------------------------------")
-            print("This is a list of terms to exclude")
-            print("If the title of a listing contains one of the items in the list, it will be filtered out.")
-            print("It is (also) case insensitive.")
+                data["INCLUDED_TERMS_TWO"] = models
 
-            exclude = []
+                print("-------------------------------")
+                print("This is a list of terms to exclude")
+                print("If the title of a listing contains one of the items in the list, it will be filtered out.")
+                print("It is (also) case insensitive.")
 
-            list_item = input("Enter a term or (q) to quit: ")
+                exclude = []
 
-            while not list_item.lower() == "q":
-                exclude.append(list_item)
-                list_item = input("Enter an term or (q) to quit: ")
-
-            data["EXCLUDED_TERMS"] = exclude
-
-            print("-------------------------------")
-            data["MAX_PRICE"] = input("Enter the maximum price: ")
-            print("-------------------------------")
-            data["MAX_MILEAGE"] = input("Enter the maximum mileage: ")
-            print("-------------------------------")
-            data["MIN_YEAR"] = input("Enter the minimum year: ")
-            print("-------------------------------")
-        else:
-            print("Generic Scraping")
-            print("INCLUDED_TERMS is a list of terms where if the title contains any of them, it will be let through.")
-
-            terms = []
-
-            list_item = input("Enter a term or (q) to quit: ")
-
-            while not list_item.lower() == "q":
-                terms.append(list_item)
                 list_item = input("Enter a term or (q) to quit: ")
 
-            data["INCLUDED_TERMS"] = terms
+                while not list_item.lower() == "q":
+                    exclude.append(list_item)
+                    list_item = input("Enter an term or (q) to quit: ")
 
-            print("EXCLUDED_TERMS is a list of terms where if the title contains any of them, it will be filtered out.")
+                data["EXCLUDED_TERMS"] = exclude
 
-            terms = []
-            
-            list_item = input("Enter a term or (q) to quit: ")
-
-            while not list_item.lower() == "q":
-                terms.append(list_item)
-                list_item = input("Enter a term or (q) to quit: ")
-
-            data["EXCLUDED_TERMS"] = terms
-
-            print("-------------------------------")
-            data["MAX_PRICE"] = input("Enter the maximum price")
-            print("-------------------------------")
-
-        print("Saving to settings.json")
-        with open(filename, "w") as f:
-            json.dump(data, f, indent=4)
-        print("Saved!")
-
-    elif setup_id == "s":
-        # scraper setup
-        print("--- Scraper Setup ---")
-        print("-------------------------------")
-        print("Getting OS")
-        system = get_os()
-        print("Attempting to find chrome path")
-        path = get_chrome_path(system)
-        if path == None:
-            print("Chrome not found")
-            print("Either install chrome or enter the path to a seperate browser (untested)")
-            if input("Use custom path? (y/n) ") == "y":
-                data["CHROME_PATH"] = input("Enter custom path: ")
+                print("-------------------------------")
+                data["MAX_PRICE"] = input("Enter the maximum price: ")
+                print("-------------------------------")
+                data["MAX_MILEAGE"] = input("Enter the maximum mileage: ")
+                print("-------------------------------")
+                data["MIN_YEAR"] = input("Enter the minimum year: ")
+                print("-------------------------------")
             else:
-                print("Skipping chrome path")
+                print("Generic Scraping")
+                print("INCLUDED_TERMS is a list of terms where if the title contains any of them, it will be let through.")
 
-            if not data["USER_PATH"]:
+                terms = []
+
+                list_item = input("Enter a term or (q) to quit: ")
+
+                while not list_item.lower() == "q":
+                    terms.append(list_item)
+                    list_item = input("Enter a term or (q) to quit: ")
+
+                data["INCLUDED_TERMS"] = terms
+
+                print("EXCLUDED_TERMS is a list of terms where if the title contains any of them, it will be filtered out.")
+
+                terms = []
+                
+                list_item = input("Enter a term or (q) to quit: ")
+
+                while not list_item.lower() == "q":
+                    terms.append(list_item)
+                    list_item = input("Enter a term or (q) to quit: ")
+
+                data["EXCLUDED_TERMS"] = terms
+
+                print("-------------------------------")
+                data["MAX_PRICE"] = input("Enter the maximum price")
+                print("-------------------------------")
+
+            print("Saving to settings.json")
+            with open(filename, "w") as f:
+                json.dump(data, f, indent=4)
+            print("Saved!")
+
+        elif setup_id == "s":
+            # scraper setup
+            print("--- Scraper Setup ---")
+            print("-------------------------------")
+            print("Getting OS")
+            system = get_os()
+            print("Attempting to find chrome path")
+            path = get_chrome_path(system)
+            if path == None:
+                print("Chrome not found")
+                print("Either install chrome or enter the path to a seperate browser (untested)")
+                if input("Use custom path? (y/n) ") == "y":
+                    data["CHROME_PATH"] = input("Enter custom path: ")
+                else:
+                    print("Skipping chrome path")
+
+                if not data["USER_PATH"]:
+                    print("-------------------------------")
+                    print("USER_PATH chooses what chrome profile to use")
+                    data["USER_PATH"] = input("Enter custom chrome profile path: ")
+
+            else:
+                data["CHROME_PATH"] = path
+                print(f"Using directory {path}")
                 print("-------------------------------")
                 print("USER_PATH chooses what chrome profile to use")
-                data["USER_PATH"] = input("Enter custom chrome profile path: ")
+                data["USER_PATH"] = get_profile_path(system)
+                print(f"Using directory {data['USER_PATH']}")
 
-        else:
-            data["CHROME_PATH"] = path
-            print(f"Using directory {path}")
+            data["SCROLLS"] = 100
+
+            data["PURGE_DB_ON_START"] = False
+
             print("-------------------------------")
-            print("USER_PATH chooses what chrome profile to use")
-            data["USER_PATH"] = get_profile_path(system)
-            print(f"Using directory {data['USER_PATH']}")
+            print("FACEBOOK_URL is the url that the scraper will go to in order to find listings.")
+            print("Without this, the program doesn't have anywhere to go and will fail.")
+            print("It should start with https://")
 
-        data["SCROLLS"] = 100
+            data["FACEBOOK_URL"] = input("Enter the url here: ")
 
-        data["PURGE_DB_ON_START"] = False
+            # Now we need to open that chrome profile so they can log into facebook
+            print("-------------------------------")
+            input("A chrome instance will open, please sign into marketplace there. (press enter) ")
 
-        print("-------------------------------")
-        print("FACEBOOK_URL is the url that the scraper will go to in order to find listings.")
-        print("Without this, the program doesn't have anywhere to go and will fail.")
-        print("It should start with https://")
+            sign_into_marketplace()
 
-        data["FACEBOOK_URL"] = input("Enter the url here: ")
+            print("Saving to settings.json")
+            with open(filename, "w") as f:
+                json.dump(data, f, indent=4)
+            print("Saved!")
 
-        # Now we need to open that chrome profile so they can log into facebook
-        print("-------------------------------")
-        input("A chrome instance will open, please sign into marketplace there. (press enter) ")
+        elif setup_id == "e":
+            # Email setup
+            data["SEND_NOTIFICATIONS"] = True
+            print("--- Email Setup ---")
+            print("-------------------------------")
+            print("In order to send emails, you need a gmail account and the app password from that account.")
+            print("This is different than the password you use to sign in. ")
+            print("In order to get it, go to your google account settings and search for 'App Password'")
+            print("2fa has to be on.")
+            print("It should be a 16 digit string with spaces between every 4 characters.")
 
-        tries = 0
-        max_tries = 5
-        successful = False
+            data["APP_PASSWORD"] = input("Enter it here: ")
 
-        while tries < max_tries and not successful:
-            with sync_playwright() as p:
-                try:
-                    browser_context = p.chromium.launch_persistent_context(
+            print("-------------------------------")
+            data["SENDER_ADDRESS"] = input("Enter the email that the app password is from: ")
+
+            print("-------------------------------")
+            print("RECIEVER_ADDRESS is a list of all the addresses to send the new items to.")
+
+            emails = []
+
+            list_item = input("Enter an email or (q) to quit: ")
+
+            while not list_item.lower() == "q":
+                emails.append(list_item)
+                list_item = input("Enter an email or (q) to quit: ")
+
+            data["RECIEVER_ADDRESS"] = emails
+
+            print("Saving to settings.json")
+            with open(filename, "w") as f:
+                json.dump(data, f, indent=4)
+            print("Saved!")
+    
+        elif setup_id == "q":
+            print("exiting...")
+            break
+        else:
+            print("invalid option")
+    print("Saving to settings.json...")
+    save_settings()
+
+    print("You're all set. Have a nice day!")
+
+@eel.expose
+def sign_into_marketplace():
+    tries = 0
+    max_tries = 5
+    successful = False
+
+    while tries < max_tries and not successful:
+        with sync_playwright() as p:
+            try:
+                browser_context = p.chromium.launch_persistent_context(
                         executable_path=data["CHROME_PATH"],
                         user_data_dir=data["USER_PATH"],
                         headless=False,
                         )
-                    
-                    print("Context launched!")
 
-                    page = browser_context.new_page()
-                    page.goto("https://www.facebook.com")
-                    successful = True
+                print("Context launched!")
 
-                    browser_context.wait_for_event("close", timeout=0)
+                page = browser_context.new_page()
+                page.goto("https://www.facebook.com")
+                successful = True
 
-                except Exception as e:
-                    print(e)
-                    tries += 1
-        if not successful:
-            print(f"Opening Chrome failed after {max_tries} tries")
+                browser_context.wait_for_event("close", timeout=0)
 
-        print("Saving to settings.json")
-        with open(filename, "w") as f:
-            json.dump(data, f, indent=4)
-        print("Saved!")
+            except Exception as e:
+                print(e)
+                tries += 1
+    if not successful:
+        print(f"Opening Chrome failed after {max_tries} tries")
 
-    elif setup_id == "e":
-        # Email setup
-        data["SEND_NOTIFICATIONS"] = True
-        print("--- Email Setup ---")
-        print("-------------------------------")
-        print("In order to send emails, you need a gmail account and the app password from that account.")
-        print("This is different than the password you use to sign in. ")
-        print("In order to get it, go to your google account settings and search for 'App Password'")
-        print("2fa has to be on.")
-        print("It should be a 16 digit string with spaces between every 4 characters.")
+@eel.expose
+def set_setup_var(var_name, value):
+    data[var_name] = value
 
-        data["APP_PASSWORD"] = input("Enter it here: ")
+@eel.expose
+def get_setup_var(var_name):
+    return data[var_name]
 
-        print("-------------------------------")
-        data["SENDER_ADDRESS"] = input("Enter the email that the app password is from: ")
+@eel.expose
+def save_settings():
+    with open(filename, "w") as f:
+        json.dump(data, f, indent=4)
 
-        print("-------------------------------")
-        print("RECIEVER_ADDRESS is a list of all the addresses to send the new items to.")
-
-        emails = []
-
-        list_item = input("Enter an email or (q) to quit: ")
-
-        while not list_item.lower() == "q":
-            emails.append(list_item)
-            list_item = input("Enter an email or (q) to quit: ")
-
-        data["RECIEVER_ADDRESS"] = emails
-
-        print("Saving to settings.json")
-        with open(filename, "w") as f:
-            json.dump(data, f, indent=4)
-        print("Saved!")
- 
-    elif setup_id == "q":
-        print("exiting...")
-        break
-    else:
-        print("invalid option")
-
-print("Saving to settings.json...")
-
-with open(filename, "w") as f:
-    json.dump(data, f, indent=4)
-
-print("You're all set. Have a nice day!")
+if __name__ == "__main__":
+    init_setup()

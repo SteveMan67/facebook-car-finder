@@ -1,11 +1,7 @@
 import eel
 import search
 import scraper
-
-
-@eel.expose
-def unique_check():
-    return "hello"
+import setup
 
 eel.init('web')
 eel.start('search.html')
