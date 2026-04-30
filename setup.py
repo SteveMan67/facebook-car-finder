@@ -273,7 +273,7 @@ def init_setup():
             data["SENDER_ADDRESS"] = input("Enter the email that the app password is from: ")
 
             print("-------------------------------")
-            print("RECIEVER_ADDRESS is a list of all the addresses to send the new items to.")
+            print("RECIEVER_ADDRESSES is a list of all the addresses to send the new items to.")
 
             emails = []
 
@@ -283,7 +283,7 @@ def init_setup():
                 emails.append(list_item)
                 list_item = input("Enter an email or (q) to quit: ")
 
-            data["RECIEVER_ADDRESS"] = emails
+            data["RECIEVER_ADDRESSES"] = emails
 
             print("Saving to settings.json")
             with open(filename, "w") as f:

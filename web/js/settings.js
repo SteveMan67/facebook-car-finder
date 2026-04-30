@@ -104,7 +104,7 @@ function getPills() {
 }
 
 async function updateReceiverAddresses() {
-  addresses = await eel.get_setup_var("RECIEVER_ADDRESS")();
+  addresses = await eel.get_setup_var("RECIEVER_ADDRESSES")();
   addresses.forEach((address) => {
     addPill(address);
   });
@@ -118,7 +118,7 @@ function isValidFormat(email) {
 }
 
 async function savePills() {
-  await eel.set_setup_var("RECIEVER_ADDRESS", getPills())();
+  await eel.set_setup_var("RECIEVER_ADDRESSES", getPills())();
   await eel.save_settings();
 }
 

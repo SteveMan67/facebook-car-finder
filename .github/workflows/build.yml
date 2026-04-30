@@ -18,9 +18,7 @@ jobs:
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller playwright
-          pip install eel
-          pip install tqdm
+          pip install pyinstaller playwright eel tqdm
 
       - name: Build
         run: |
@@ -28,7 +26,7 @@ jobs:
           pyinstaller --onefile search.py
           pyinstaller --onefile setup.py
           pyinstaller --onefile convert-to-csv.py
-          pyinstaller --onefile main.py
+          pyinstaller --onefile --add-data "web:web" main.py
           python -c "import shutil; shutil.copy('settings.example.json','dist/')"
 
       - name: Upload Artifact

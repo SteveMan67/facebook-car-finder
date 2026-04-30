@@ -61,6 +61,22 @@ conn = sqlite3.connect("listings.db")
 cursor = conn.cursor()
 conn.execute('PRAGMA journal_mode=WAL;')
 
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS listings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        price INTEGER,
+        url TEXT UNIQUE,
+        category TEXT NOT NULL,
+        metadata TEXT,
+        location TEXT,
+        scraped_date TEXT,
+        image_url TEXT
+    )
+               ''')
+
+conn.commit()
+
 cursor.execute('''SELECT title from listings where 1 = 1''')
 conn.commit()
 
@@ -73,6 +89,7 @@ if PURGE_VIEWED_DB:
                 DROP TABLE IF EXISTS viewed
                    ''')
     conn.commit()
+
 
 cursor.execute('''
                 CREATE TABLE IF NOT EXISTS viewed (

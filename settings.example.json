@@ -1,9 +1,10 @@
 {
+  "CATEGORY": "Vehicles",
   "PURGE_VIEWED_DB": false,
-  "ALLOWED_MAKES": [],
-  "ALLOWED_MODELS": [],
   "EXCLUDED_TERMS": [],
+  "MUST_HAVE_TERMS": [],
   "INCLUDED_TERMS": [],
+  "INCLUDED_TERMS_TWO": [],
   "MAX_PRICE": 200000,
   "MIN_PRICE": 0,
   "MAX_MILEAGE": 1000000,
@@ -13,7 +14,7 @@
 
   "PURGE_DB_ON_START": false,
   "RUN_HEADLESS": true,
-  "SCROLLS": 20,
+  "SCROLLS": 100,
   "FACEBOOK_URL": "https://www.facebook.com/marketplace/tulsa/search?transmissionType=manual&query=Vehicles",
   "USER_PATH": "C:\\Temp\\ChromeScraper",
   "CHROME_PATH": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -25,4 +26,3 @@
   "APP_PASSWORD": "abcd efgh ijkl mnop",
   "SENDER_ADDRESS": "johndoe@gmail.com",
   "RECIEVER_ADDRESSES": ["johndoe@gmail.com", "otheremail@yahoo.com"]
-}
