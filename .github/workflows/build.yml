@@ -14,19 +14,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
-      - name: Install deps
+      - name: Install uv & deps
         run: |
-          python -m pip install --upgrade pip
-          pip install pyinstaller playwright eel tqdm
+          pip install uv
+          uv pip install --system pyinstaller playwright eel tqdm
 
       - name: Build
         run: |
-          pyinstaller --onefile scraper.py
-          pyinstaller --onefile search.py
-          pyinstaller --onefile setup.py
-          pyinstaller --onefile convert-to-csv.py
-          pyinstaller --onefile --add-data "web:web" main.py
+          pyinstaller --onefile scraper.py &
+          pyinstaller --onefile search.py &
+          pyinstaller --onefile setup.py &
+          pyinstaller --onefile convert-to-csv.py &
+          pyinstaller --onefile --add-data "web:web" main.py &
+          wait    background jobs finished
           python -c "import shutil; shutil.copy('settings.example.json','dist/')"
 
       - name: Upload Artifact
