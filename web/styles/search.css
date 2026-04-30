@@ -51,10 +51,6 @@
   font-size: 18px;
 }
 
-.filters option {
-  color: black;
-}
-
 .filters .label {
   text-align: center;
   margin: 5px;

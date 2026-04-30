@@ -1,5 +1,4 @@
 import sqlite3
-from secrets import *
 import smtplib
 from email.message import EmailMessage
 import json
@@ -85,15 +84,20 @@ cursor.execute('''
                 )
                ''')
 
-cursor.execute('''SELECT title, price, url, location, category, metadata, image_url
-               FROM listings 
-               WHERE price <= ? AND price >= ? ORDER BY scraped_date DESC''', 
-               (MAX_PRICE, MIN_PRICE))
-conn.commit()
 
-rows = cursor.fetchall()
-conn.close()
+@eel.expose
+def get_categories():
+    conn = sqlite3.connect("listings.db")
+    cursor = conn.cursor()
 
+    cursor.execute('''SELECT DISTINCT category FROM listings''')
+
+    conn.commit()
+
+    rows = [row[0] for row in cursor.fetchall()]
+    conn.close()
+
+    return rows
 
 new_listings = []
 
@@ -157,18 +161,45 @@ def search_text(search_term):
     formatted = f"%{search_term}%"
     conn = sqlite3.connect("listings.db")
     cursor = conn.cursor()
-    cursor.execute('''
-        SELECT title, price, url, location, category, metadata, image_url
-               FROM listings 
-               WHERE price <= ? AND price >= ? AND title LIKE ?''',
-                   (MAX_PRICE, MIN_PRICE, formatted))
+    if (CATEGORY.lower() == "any" or CATEGORY.lower() == ""):
+        cursor.execute('''
+            SELECT title, price, url, location, category, metadata, image_url
+                FROM listings 
+                WHERE price <= ? AND price >= ? AND title LIKE ?''',
+                       (MAX_PRICE, MIN_PRICE, formatted))
+    else:
+        cursor.execute('''
+            SELECT title, price, url, location, category, metadata, image_url
+                FROM listings 
+                WHERE price <= ? AND price >= ? AND title LIKE ? AND category LIKE ?''',
+                    (MAX_PRICE, MIN_PRICE, formatted, CATEGORY))
     global rows
-    rows = cursor.fetchall()
+    rows = get_rows()
     conn.close()
     return search()
 
+def get_rows():
+    conn = sqlite3.connect("listings.db")
+    cursor = conn.cursor()
+    if (CATEGORY.lower() == "any" or CATEGORY.lower() == ""):
+        cursor.execute('''SELECT title, price, url, location, category, metadata, image_url
+               FROM listings 
+               WHERE price <= ? AND price >= ? ORDER BY scraped_date DESC''', 
+                       (MAX_PRICE, MIN_PRICE))
+    else:
+        cursor.execute('''SELECT title, price, url, location, category, metadata, image_url
+               FROM listings 
+               WHERE price <= ? AND price >= ? AND category LIKE ? ORDER BY scraped_date DESC''', 
+                    (MAX_PRICE, MIN_PRICE, CATEGORY))
+    conn.commit()
+
+    return cursor.fetchall()
+
+
 @eel.expose
 def search():
+    rows = get_rows()
+
     out = []
     listing_count = 0
     for row in rows:
@@ -236,13 +267,13 @@ def search():
                 print(f'Mileage: {data["mileage"]}mi')
 
             out.append(data)
+    if len(new_listings) > 0 and SEND_NOTIFICATIONS:
+        send_notification("New Listings Found", new_listings)
     return out
 
 if __name__ == "__main__":
     listing_count = 0
     search()
-    if len(new_listings) > 0 and SEND_NOTIFICATIONS:
-        send_notification("New Listings Found", new_listings)
 
     print("")
     print(f"found {listing_count} total, {len(new_listings)} new listings matching search parameters")

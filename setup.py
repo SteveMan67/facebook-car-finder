@@ -2,7 +2,6 @@ import sys
 import os
 import shutil
 import json
-from tkinter import filedialog
 from playwright.sync_api import sync_playwright
 import eel
 
@@ -10,6 +9,17 @@ import eel
 
 template = "settings.example.json"
 filename = "settings.json"
+
+def quick_setup():
+    with open(filename, "r") as f:
+        data = json.load(f)
+    system = get_os()
+    path = get_chrome_path(system)
+    data["CHROME_PATH"] = path
+    data["USER_PATH"] = get_profile_path(system)
+    data["SCROLLS"] = 100
+    with open(filename, "w") as f:
+        json.dump(data, f, indent=4)
 
 def get_os():
     if sys.platform == "win32":
@@ -89,6 +99,8 @@ def get_profile_path(system):
 if os.path.exists(template) and not os.path.exists(filename):
     shutil.copy(template, filename)
     print("Created settings.json file from template")
+    if not __name__ == "__main__":
+        quick_setup()
 
 with open(filename, "r") as f:
     data = json.load(f)

@@ -24,11 +24,11 @@ function addListing(listingData) {
     <div class="price-mileage">
       <div class="price">
         <img src="icons/money.svg" alt="" />
-        <p>${listingData.price.toLocaleString()}</p>
+        <p>${listingData.price?.toLocaleString()}</p>
       </div>
       <div class="mileage">
         <img src="icons/mileage.svg" alt="" />
-        <p>${listingData.mileage.toLocaleString()}</p>
+        <p>${listingData.mileage?.toLocaleString()}</p>
       </div>
     </div>
     <div class="location">
@@ -79,6 +79,25 @@ const minMileage = document.getElementById("min-mileage");
 const maxMileage = document.getElementById("max-mileage");
 const minYear = document.getElementById("min-year");
 const maxYear = document.getElementById("max-year");
+
+async function initCategory() {
+  const categories = await eel.get_categories()();
+  console.log(categories);
+  category.innerHTML = "";
+  let html = '<option value="any">Any</option>';
+  categories.forEach((cat) => {
+    html += `<option value="${cat}">${cat}</option>`;
+    console.log(html, cat);
+  });
+  category.innerHTML = html;
+}
+
+initCategory();
+
+category.addEventListener("input", async () => {
+  await eel.set_var("CATEGORY", category.value);
+  search();
+});
 
 searchbar.addEventListener("input", async () => {
   const listingsContainer = document.querySelector(".listings");

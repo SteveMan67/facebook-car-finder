@@ -56,11 +56,6 @@ elif args.windowed:
 if args.scrolls:
     SCROLLS = args.scrolls
 
-category = "Unkown"
-
-if "vehicles" in FACEBOOK_URL.lower():
-    category = "Vehicle"
-
 conn = sqlite3.connect("listings.db", check_same_thread=False)
 conn.execute('PRAGMA journal_mode=WAL;')
 
@@ -103,7 +98,7 @@ def add_listing(title, price, url, location, metadata, img_url):
         cursor.execute('''
             INSERT INTO listings (title, price, url, location, metadata, scraped_date, category, image_url)
             VALUES (?, ?, ?, ?, ?, ?,  ?, ?)
-                       ''', (title, price, url, location, metadata, now, category, img_url))
+                       ''', (title, price, url, location, metadata, now, CATEGORY, img_url))
         conn.commit()
     except sqlite3.IntegrityError:
         # update the current listing in the db
@@ -111,8 +106,8 @@ def add_listing(title, price, url, location, metadata, img_url):
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             cursor.execute('''
-                UPDATE listings set title = ?, price = ?, location = ?, metadata = ?, scraped_date = ?, category = ?, image_url = ? WHERE url = ?
-                        ''', (title, price, location, metadata, now, category, img_url, url))
+                UPDATE listings set title = ?, price = ?, location = ?, metadata = ?, category = ?, image_url = ? WHERE url = ?
+                        ''', (title, price, location, metadata, CATEGORY, img_url, url))
             conn.commit()
         except: 
             print(f"Could not add {title}")

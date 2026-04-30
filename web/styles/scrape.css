@@ -43,6 +43,16 @@
   margin: 0;
 }
 
+.category-input {
+  position: relative;
+}
+
+.category-input .dropdown {
+  position: absolute;
+  background-color: #090a16;
+  border: 1px solid white;
+}
+
 input {
   border: 1px solid white;
   outline: none;
