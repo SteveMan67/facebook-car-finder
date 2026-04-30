@@ -22,14 +22,14 @@ jobs:
           pip install uv
           uv pip install --system pyinstaller playwright eel tqdm
 
-      - name: Build
+      - name: Build (parallel)
+        shell: bash
         run: |
           pyinstaller --onefile scraper.py &
           pyinstaller --onefile search.py &
           pyinstaller --onefile setup.py &
           pyinstaller --onefile convert-to-csv.py &
           pyinstaller --onefile --add-data "web:web" main.py &
-          wait
           python -c "import shutil; shutil.copy('settings.example.json','dist/')"
 
       - name: Upload Artifact
