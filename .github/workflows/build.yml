@@ -27,7 +27,7 @@ jobs:
           pyinstaller --onefile scraper.py
           pyinstaller --onefile search.py
           pyinstaller --onefile setup.py
-          pyinstaller --onefile csv.py
+          pyinstaller --onefile convert-to-csv.py
           pyinstaller --onefile main.py
           python -c "import shutil; shutil.copy('settings.example.json','dist/')"
 
