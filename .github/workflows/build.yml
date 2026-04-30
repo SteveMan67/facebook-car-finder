@@ -45,10 +45,14 @@ jobs:
           pyinstaller --onefile --distpath dist --workpath build/convert convert-to-csv.py &
           pyinstaller --onefile --distpath dist --workpath build/main --add-data "web:web" main.py &
           wait
-
       - name: Copy settings file
         shell: bash
-        run: cp settings.example.json dist/ 2>/dev/null || echo "Warning: settings.example.json not found, skipping"
+        run: |
+          if [ -f "settings.example.json" ]; then
+            cp settings.example.json dist/
+          else
+            echo "Warning: settings.example.json not found, skipping"
+          fi
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
