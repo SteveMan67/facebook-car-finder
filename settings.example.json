@@ -26,3 +26,4 @@
   "APP_PASSWORD": "abcd efgh ijkl mnop",
   "SENDER_ADDRESS": "johndoe@gmail.com",
   "RECIEVER_ADDRESSES": ["johndoe@gmail.com", "otheremail@yahoo.com"]
+}
