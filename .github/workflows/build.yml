@@ -1,3 +1,4 @@
+name: Build All OSs
 on:
   workflow_dispatch:
     push:
@@ -16,10 +17,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
 
       - name: Install dependencies
         run: uv pip install --system pyinstaller playwright eel tqdm
@@ -57,4 +59,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: executables-${{ matrix.os }}
-          path: dist/*: dist/*
+          path: dist/*         path: dist/*: dist/*
