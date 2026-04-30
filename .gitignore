@@ -9,4 +9,9 @@ cars.db
 IMPLEMENTATION.md
 export.csv
 build/
+dist/listings.db-shm
+dist/listiings.db-wal
+listings.db-shm
+listings.db-wal
+main.spec
 

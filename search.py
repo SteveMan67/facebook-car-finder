@@ -101,6 +101,8 @@ cursor.execute('''
                 )
                ''')
 
+conn.close()
+
 
 @eel.expose
 def get_categories():
@@ -210,11 +212,16 @@ def get_rows():
                     (MAX_PRICE, MIN_PRICE, CATEGORY))
     conn.commit()
 
-    return cursor.fetchall()
+    rows = cursor.fetchall()
+
+    conn.close()
+    return rows
 
 
 @eel.expose
 def search():
+    conn = sqlite3.connect("listings.db")
+    cursor = conn.cursor()
     rows = get_rows()
 
     out = []
@@ -284,6 +291,7 @@ def search():
                 print(f'Mileage: {data["mileage"]}mi')
 
             out.append(data)
+    conn.close()
     if len(new_listings) > 0 and SEND_NOTIFICATIONS:
         send_notification("New Listings Found", new_listings)
     return out
