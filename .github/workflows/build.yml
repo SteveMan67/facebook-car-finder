@@ -1,5 +1,7 @@
 name: Build All OSs
-on: [push]
+on:
+  workflow_dispatch:
+  push: ["main"]
 
 jobs:
   build:
