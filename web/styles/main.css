@@ -1,4 +1,5 @@
 body {
+  height: calc(100vh - 30px);
   background-color: #090a16;
   margin: 15px;
 }

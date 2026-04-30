@@ -87,7 +87,7 @@ cursor.execute('''
 
 cursor.execute('''SELECT title, price, url, location, category, metadata, image_url
                FROM listings 
-               WHERE price <= ? AND price >= ?''', 
+               WHERE price <= ? AND price >= ? ORDER BY scraped_date DESC''', 
                (MAX_PRICE, MIN_PRICE))
 conn.commit()
 

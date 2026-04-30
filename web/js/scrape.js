@@ -48,7 +48,7 @@ startScraper.addEventListener("mouseup", async () => {
   totalScrolls = await eel.get_scraper_var("SCROLLS")();
   scrollsTotal.innerText = totalScrolls;
   currentScrolls.innerText = "0";
-  eel.run_scraper()();
+  eel.init_scraper()();
 });
 
 function update_progress(scrolls, etaString, totalFound) {

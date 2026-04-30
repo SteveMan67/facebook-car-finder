@@ -8,6 +8,7 @@ import sys
 import argparse
 from tqdm import tqdm
 import eel
+import threading
 
 @eel.expose
 def set_scraper_var(name, value):
@@ -60,7 +61,7 @@ category = "Unkown"
 if "vehicles" in FACEBOOK_URL.lower():
     category = "Vehicle"
 
-conn = sqlite3.connect("listings.db")
+conn = sqlite3.connect("listings.db", check_same_thread=False)
 conn.execute('PRAGMA journal_mode=WAL;')
 
 cursor = conn.cursor()
@@ -89,7 +90,10 @@ def init_db():
     ''')
     conn.commit()
     print("database ready")
-    eel.log("database ready")
+    try:
+        eel.log("database ready")
+    except:
+        pass
 
 def add_listing(title, price, url, location, metadata, img_url):
     metadata = json.dumps(metadata)
@@ -141,20 +145,38 @@ def parse_data(listings):
             location = raw_text[2 + shift]
 
             tqdm.write(f"{title} | ${price} | {clean_url} ")
-            eel.log(f"{title} | ${price} | {clean_url} ")
+            try:
+                eel.log(f"{title} | ${price} | {clean_url} ")
+            except:
+                pass
 
             add_listing(title, price, clean_url, location, raw_text, img_url)
 
 
         except Exception as e:
             print(f"Parse error for listing -> {e}")
-            eel.log(f"Parse error for listing -> {e}")
+            try:
+                eel.log(f"Parse error for listing -> {e}")
+            except:
+                pass
             
     return listings_found
 
+stop_event = threading.Event()
 
 @eel.expose
+def init_scraper():
+    stop_event.clear()
+    threading.Thread(target = run_scraper, daemon=True).start()
+
+def stop_scraper():
+    stop_event.set()
+
 def run_scraper():
+    conn = sqlite3.connect("listings.db")
+    cursor = conn.cursor()
+
+    scraper_running = True
     listings_found = 0
 
     with sync_playwright() as p:
@@ -186,13 +208,18 @@ def run_scraper():
                 tries += 1
 
         print("context launched!")
-        eel.log("context launched!")
+        try: 
+            eel.log("context launched!")
+        except:
+            pass
 
         page = browser_context.new_page()
 
-
         print("visiting marketplace")
-        eel.log("visiting marketplace")
+        try:
+            eel.log("visiting marketplace")
+        except:
+            pass
         page.goto(FACEBOOK_URL)
         try: 
             page.wait_for_selector('a[href*="/marketplace/item"]')
@@ -225,8 +252,17 @@ def run_scraper():
         last_listing = ""
 
         tqdm.write(f"scrolls: {SCROLLS}")
-        eel.log(f"scrolls: {SCROLLS}")
+        try:
+            eel.log(f"scrolls: {SCROLLS}")
+        except:
+            pass
+
         for i in range(SCROLLS):
+            if stop_event.is_set():
+                eel.log("Interrupted, hmmph")
+                tqdm.write("Interrupted, hmmph")
+                return
+
             total_scroll = random.randint(2000, 5000)
             scrolled = 0
 
@@ -273,8 +309,12 @@ def run_scraper():
         pbar.close()
 
         tqdm.write("finished, exiting")
-        eel.log("finished, exiting")
-        eel.finished()
+        try:
+            eel.log("finished, exiting")
+            eel.finished()
+        except:
+            pass
+
         browser_context.close()
 
 
