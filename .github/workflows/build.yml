@@ -18,6 +18,7 @@ jobs:
 
       - name: Install uv & deps
         run: |
+
           pip install uv
           uv pip install --system pyinstaller playwright eel tqdm
 
@@ -28,7 +29,7 @@ jobs:
           pyinstaller --onefile setup.py &
           pyinstaller --onefile convert-to-csv.py &
           pyinstaller --onefile --add-data "web:web" main.py &
-          wait    background jobs finished
+          wait
           python -c "import shutil; shutil.copy('settings.example.json','dist/')"
 
       - name: Upload Artifact
