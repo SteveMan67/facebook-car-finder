@@ -1,4 +1,3 @@
-name: Build All OSs
 on:
   workflow_dispatch:
     push:
@@ -26,15 +25,25 @@ jobs:
       - name: Install dependencies
         run: uv pip install --system pyinstaller playwright eel tqdm
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-browsers
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            ~/AppData/Local/ms-playwright
+          key: playwright-${{ matrix.os }}-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: playwright-${{ matrix.os }}-
+
       - name: Install Playwright browsers
+        if: steps.playwright-browsers.outputs.cache-hit != 'true' && runner.os == 'Linux'
         run: |
           playwright install
           playwright install-deps
-        if: runner.os == 'Linux'
 
       - name: Install Playwright browsers (non-Linux)
+        if: steps.playwright-browsers.outputs.cache-hit != 'true' && runner.os != 'Linux'
         run: playwright install
-        if: runner.os != 'Linux'
 
       - name: Build (parallel)
         shell: bash
@@ -45,14 +54,11 @@ jobs:
           pyinstaller --onefile --distpath dist --workpath build/convert convert-to-csv.py &
           pyinstaller --onefile --distpath dist --workpath build/main --add-data "web:web" main.py &
           wait
+
       - name: Copy settings file
         shell: bash
         run: |
-          if [ -f "settings.example.json" ]; then
-            cp settings.example.json dist/
-          else
-            echo "Warning: settings.example.json not found, skipping"
-          fi
+          cp settings.example.json dist/ 2>/dev/null || echo "Warning: settings.example.json not found, skipping"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
